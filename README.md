@@ -1,8 +1,8 @@
 # ZonaMovil – Web Mobile Management System
 
-ZonaMovil is a full-stack multi-branch management platform designed for inventory control, sales, repairs, customers, suppliers, and business operations for mobile stores.
+ZonaMovil is a full-stack multi-branch management platform designed for inventory control, sales, repairs, customers, suppliers, payments, and business operations for mobile stores.
 
-This project was developed as part of a university software development project.
+This project was developed as part of a university software engineering project.
 
 ---
 
@@ -10,13 +10,14 @@ This project was developed as part of a university software development project.
 
 - User authentication and login
 - Dashboard with business statistics
-- Inventory management
+- Inventory management system
 - Sales management
 - Repairs management
 - Customer management
 - Supplier management
+- Payment management (Abonos)
 - Transfers between branches
-- Purchases and payments management
+- Purchase management
 - Role-based access control
 - Responsive web interface
 
@@ -24,56 +25,46 @@ This project was developed as part of a university software development project.
 
 ## Technologies Used
 
+### Backend
+- Node.js
+- Express.js
+- PostgreSQL
+- JavaScript
+
 ### Frontend
 - HTML
 - CSS
 - JavaScript
 
-### Backend
-- Node.js
-- Express.js
-
-### Database
-- PostgreSQL
-
-### Additional Tools
+### Tools
+- Git & GitHub
+- VS Code
+- Postman
 - Ngrok
-- Git / GitHub
-
----
-
-## Project Structure
-
-```txt
-public/
- ├── dashboard.html
- ├── inventario.html
- ├── ventas.html
- ├── reparaciones.html
- ├── clientes.html
- └── usuarios.html
-
-src/
- ├── config/
- ├── controllers/
- ├── middlewares/
- └── routes/
-
-server.js
-package.json
-```
 
 ---
 
 ## Screenshots
 
-### Login Screen
+### Login
 
-![Login Screen](login.png)
+![Login](./login-web.png)
 
-### Dashboard Screen
+### Dashboard
 
-![Dashboard Screen](dashboard.png)
+![Dashboard](./dashboard-web.png)
+
+### Inventory Management
+
+![Inventory](./inventario-web.png)
+
+### Payment Management (Abonos)
+
+![Abonos](./abonos-web.png)
+
+### Branch Transfers
+
+![Transfers](./transferencias-web.png)
 
 ---
 
@@ -99,12 +90,31 @@ node server.js
 
 ---
 
+## Project Structure
+
+```plaintext
+src/
+ ├── config/
+ ├── controllers/
+ ├── middlewares/
+ ├── routes/
+public/
+server.js
+package.json
+```
+
+---
+
 ## Notes
 
-This project uses a local backend connection and was tested using **Ngrok** for mobile access across different networks.
+The mobile application connects to this backend API.
+
+For external device testing, the backend was exposed using **Ngrok**.
 
 ---
 
 ## Author
 
 **Daniela Sepúlveda Gómez**
+
+Software Engineering Student
