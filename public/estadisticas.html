@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Estadísticas</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 30px;
+        font-family: Poppins;
+        background: linear-gradient(135deg, #4a00e0, #8e2de2, #2575fc);
+        color: white;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 25px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+      }
+
+      .card h2 {
+        font-size: 18px;
+      }
+
+      .card p {
+        font-size: 30px;
+        font-weight: bold;
+      }
+
+      .graficas {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+
+      .chart-card {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 25px;
+        border-radius: 20px;
+      }
+
+      canvas {
+        background: white;
+        border-radius: 14px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div style="margin-bottom: 20px; display: flex; gap: 15px">
+      <input type="date" id="fechaInicio" />
+
+      <input type="date" id="fechaFin" />
+
+      <button onclick="cargar()">Filtrar</button>
+    </div>
+    <h1>📊 Estadísticas Generales</h1>
+
+    <div class="cards">
+      <div class="card">
+        <h2>Total Ventas</h2>
+        <p id="ventas"></p>
+      </div>
+
+      <div class="card">
+        <h2>Total Compras</h2>
+        <p id="compras"></p>
+      </div>
+
+      <div class="card">
+        <h2>Ganancia</h2>
+        <p id="ganancia"></p>
+      </div>
+
+      <div class="card">
+        <h2>Equipos Vendidos</h2>
+        <p id="equipos"></p>
+      </div>
+
+      <div class="card">
+        <h2>Apartados</h2>
+        <p id="apartados"></p>
+      </div>
+    </div>
+
+    <div class="graficas">
+      <div class="chart-card">
+        <h2>Equipos Más Vendidos</h2>
+        <canvas id="chartEquipos"></canvas>
+      </div>
+
+      <div class="chart-card">
+        <h2>Métodos de Pago</h2>
+        <canvas id="chartMetodos"></canvas>
+      </div>
+    </div>
+
+    <script>
+      const token = localStorage.getItem("token");
+
+      async function cargar() {
+        const inicio = document.getElementById("fechaInicio").value;
+
+        const fin = document.getElementById("fechaFin").value;
+
+        const res = await fetch(
+          `/api/estadisticas?inicio=${inicio}&fin=${fin}`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          },
+        );
+
+        const data = await res.json();
+
+        document.getElementById("ventas").innerText =
+          "$" + data.totalVentas.toLocaleString();
+
+        document.getElementById("compras").innerText =
+          "$" + data.totalCompras.toLocaleString();
+
+        document.getElementById("ganancia").innerText =
+          "$" + data.ganancia.toLocaleString();
+
+        document.getElementById("equipos").innerText = data.equiposVendidos;
+
+        document.getElementById("apartados").innerText =
+          data.apartadosPendientes;
+
+        // =====================================
+        // CHART EQUIPOS
+        // =====================================
+
+        new Chart(document.getElementById("chartEquipos"), {
+          type: "bar",
+
+          data: {
+            labels: data.topEquipos.map((x) => x.equipo),
+
+            datasets: [
+              {
+                label: "Vendidos",
+                data: data.topEquipos.map((x) => x.vendidos),
+              },
+            ],
+          },
+        });
+
+        // =====================================
+        // CHART MÉTODOS
+        // =====================================
+
+        new Chart(document.getElementById("chartMetodos"), {
+          type: "doughnut",
+
+          data: {
+            labels: data.metodos.map((x) => x.metodo_pago),
+
+            datasets: [
+              {
+                data: data.metodos.map((x) => x.total),
+              },
+            ],
+          },
+        });
+      }
+
+      cargar();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Ticket de Compra</title>
+
+    <style>
+      body {
+        font-family: "Poppins", sans-serif;
+        background: #eef2ff;
+        padding: 30px;
+      }
+
+      .ticket {
+        max-width: 900px;
+        margin: auto;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        background: linear-gradient(135deg, #4a00e0, #8e2de2);
+        color: white;
+        padding: 30px;
+      }
+
+      .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 32px;
+        font-weight: 700;
+      }
+
+      .folio {
+        text-align: right;
+      }
+
+      .content {
+        padding: 30px;
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .info-box {
+        background: #f8fafc;
+        padding: 18px;
+        border-radius: 14px;
+      }
+
+      .info-box h4 {
+        margin: 0 0 10px;
+        color: #4a00e0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        background: #4a00e0;
+        color: white;
+        padding: 14px;
+      }
+
+      td {
+        padding: 14px;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      .total {
+        margin-top: 25px;
+        text-align: right;
+        font-size: 28px;
+        font-weight: bold;
+        color: #4a00e0;
+      }
+
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        color: #64748b;
+      }
+
+      .btn-print {
+        margin-top: 30px;
+        width: 100%;
+        border: none;
+        padding: 16px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      @media print {
+
+    .btn-print {
+        display: none !important;
+    }
+
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .ticket {
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+}
+    </style>
+  </head>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    rel="stylesheet"
+  />
+
+<div class="ticket">
+
+    <div class="header">
+
+        <div class="header-top">
+
+            <div class="logo">
+                <i class="fa fa-mobile-screen"></i>
+                ZONA MÓVIL
+            </div>
+
+            <div class="folio">
+                <h2 id="folio"></h2>
+                <div id="fecha"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="content">
+
+        <div class="info-grid">
+
+            <div class="info-box">
+                <h4>Proveedor</h4>
+                <div id="proveedor"></div>
+            </div>
+
+            <div class="info-box">
+                <h4>Compra registrada por</h4>
+                <div id="usuario"></div>
+            </div>
+
+        </div>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Equipo</th>
+                    <th>IMEI</th>
+                    <th>Sucursal</th>
+                    <th>P. Compra</th>
+                </tr>
+            </thead>
+
+            <tbody id="detalle"></tbody>
+
+        </table>
+
+        <div class="total" id="total"></div>
+
+        <button
+            class="btn-print"
+            onclick="window.print()"
+        >
+            <i class="fa fa-print"></i>
+            Imprimir Ticket
+        </button>
+
+        <div class="footer">
+            Sistema ZONA MÓVIL
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+const token = localStorage.getItem("token");
+
+async function cargarTicket() {
+
+    const params = new URLSearchParams(window.location.search);
+
+    const id = params.get("id");
+
+    const res = await fetch(
+        `/api/compras/ticket/${id}`,
+        {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        }
+    );
+
+    const data = await res.json();
+
+document.getElementById("folio").innerText =
+    data.compra.folio || `CMP-${String(data.compra.id_compra).padStart(6,"0")}`;
+
+    document.getElementById("fecha").innerText =
+        new Date(data.compra.fecha).toLocaleString();
+
+    document.getElementById("proveedor").innerText =
+        data.compra.proveedor;
+
+    document.getElementById("usuario").innerText =
+        data.compra.usuario;
+
+    document.getElementById("total").innerText =
+        `Total: ${Number(data.compra.total).toLocaleString(
+            "es-MX",
+            {
+                style: "currency",
+                currency: "MXN"
+            }
+        )}`;
+
+    document.getElementById("detalle").innerHTML =
+        data.detalle.map(e => `
+            <tr>
+
+                <td>
+                    ${e.marca}
+                    ${e.modelo}
+                    ${e.color}
+                    ${e.capacidad}
+                </td>
+
+                <td>${e.numero_imei}</td>
+
+                <td>${e.sucursal}</td>
+
+                <td>
+                    ${Number(e.precio_compra).toLocaleString(
+                        "es-MX",
+                        {
+                            style: "currency",
+                            currency: "MXN"
+                        }
+                    )}
+                </td>
+
+            </tr>
+        `).join("");
+}
+
+cargarTicket();
+
+</script>
+  </body>
+</html>

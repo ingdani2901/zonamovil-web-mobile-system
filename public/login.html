@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | ZON@MOVIL</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+      :root {
+        --primary: #6a11cb;
+        --secondary: #2575fc;
+        --accent: #c084fc;
+        --success: #10b981;
+        --danger: #ef4444;
+        --light: #f8fafc;
+        --dark: #1e293b;
+        --card-bg: rgba(255, 255, 255, 0.95);
+        --card-border: rgba(255, 255, 255, 0.3);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        background-size: 300% 300%;
+        animation: gradientMove 15s ease infinite;
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      #particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      /* CONTENEDOR PRINCIPAL */
+      .container {
+        width: 1000px;
+        height: 600px;
+        background: var(--card-bg);
+        border-radius: 30px;
+        display: flex;
+        overflow: hidden;
+        box-shadow: 0 40px 80px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+        position: relative;
+        animation: fadeUp 1s ease forwards;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* LADO IZQUIERDO */
+      .left {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(180deg, var(--primary), var(--secondary));
+        overflow: hidden;
+      }
+
+      .left img {
+        width: 75%;
+        animation: floatHero 6s ease-in-out infinite;
+      }
+
+      @keyframes floatHero {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-15px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      /* LADO DERECHO */
+      .right {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px;
+        position: relative;
+        perspective: 800px;
+      }
+
+      /* ONDAS NEÓN PRO */
+      .neon-waves {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .neon-waves svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .wave {
+        fill: none;
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        filter: drop-shadow(0 0 8px var(--accent));
+        animation:
+          drawWave 2s ease forwards,
+          pulseGlow 4s ease-in-out infinite;
+        transition:
+          stroke 0.4s ease,
+          transform 0.3s ease;
+      }
+
+      .wave1 {
+        stroke: #d946ef;
+      }
+      .wave2 {
+        stroke: #9333ea;
+      }
+      .wave3 {
+        stroke: var(--accent);
+      }
+
+      @keyframes drawWave {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 6px var(--accent));
+        }
+        50% {
+          filter: drop-shadow(0 0 20px #d946ef);
+        }
+      }
+
+      /* LOGIN CARD */
+      .login-card {
+        width: 100%;
+        max-width: 350px;
+        text-align: center;
+        z-index: 3;
+      }
+
+      .logo {
+        width: 150px;
+        margin-bottom: 40px;
+        animation: logoFloat 4s ease-in-out infinite;
+      }
+
+      @keyframes logoFloat {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      /* INPUTS */
+      .input-group {
+        position: relative;
+        margin-bottom: 30px;
+      }
+
+      .input-group i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary);
+        font-size: 14px;
+        transition: color 0.3s ease;
+      }
+
+      .input-group input {
+        width: 100%;
+        padding: 14px 14px 14px 40px;
+        border: none;
+        border-radius: 12px;
+        background: var(--light);
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .input-group input:focus {
+        box-shadow: 0 0 12px rgba(147, 51, 234, 0.4);
+        background: white;
+      }
+
+      .input-group input:focus + i {
+        color: var(--secondary);
+      }
+
+      /* BOTÓN */
+      .login-btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 30px;
+        background: linear-gradient(90deg, var(--primary), var(--secondary));
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .login-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .spinner {
+        display: none;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-top: 3px solid white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        margin: auto;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* NOTIFICACIONES */
+      .toast {
+        position: fixed;
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--dark);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+        opacity: 0;
+        transition: all 0.3s;
+      }
+
+      .toast.show {
+        opacity: 1;
+        bottom: 30px;
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+          width: 90%;
+          height: auto;
+        }
+
+        .left {
+          display: none;
+        }
+
+        .right {
+          padding: 40px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="particles-js"></div>
+
+    <div class="container">
+      <div class="left">
+        <img src="images/phones.png" />
+      </div>
+
+      <div class="right">
+        <div class="neon-waves">
+          <svg viewBox="0 0 800 600" preserveAspectRatio="none">
+            <path class="wave wave1" d="M0 300 Q200 200 400 300 T800 300" />
+            <path class="wave wave2" d="M0 350 Q200 250 400 350 T800 350" />
+            <path class="wave wave3" d="M0 400 Q200 300 400 400 T800 400" />
+          </svg>
+        </div>
+
+        <div class="login-card">
+          <img src="images/logo.png" class="logo" />
+
+          <form id="loginForm">
+            <div class="input-group">
+              <i class="fa fa-envelope"></i>
+              <input
+                type="email"
+                id="email"
+                placeholder="Correo electrónico"
+                required
+              />
+            </div>
+
+            <div class="input-group">
+              <i class="fa fa-lock"></i>
+              <input
+                type="password"
+                id="password"
+                placeholder="Contraseña"
+                required
+              />
+            </div>
+
+            <button class="login-btn" type="submit">
+              <span id="btnText">Iniciar Sesión</span>
+              <div class="spinner" id="spinner"></div>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // Configuración de Particles.js
+      particlesJS("particles-js", {
+        particles: {
+          number: { value: 60 },
+          color: { value: "#ffffff" },
+          opacity: { value: 0.2 },
+          size: { value: 3 },
+          move: { speed: 1 },
+        },
+      });
+
+      // Interacción con las ondas
+      const waves = document.querySelectorAll(".wave");
+      const container = document.querySelector(".right");
+
+      container.addEventListener("mousemove", (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 40;
+        const y = (e.clientY / window.innerHeight - 0.5) * 40;
+
+        waves.forEach((wave, index) => {
+          const depth = (index + 1) * 10;
+          wave.style.transform = `
+      translateX(${x}px)
+      translateY(${y}px)
+      translateZ(${depth}px)
+      rotateX(${y * 0.1}deg)
+      rotateY(${x * 0.1}deg)
+    `;
+        });
+      });
+
+      // Validación del formulario
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+
+          // Mostrar spinner y deshabilitar botón
+          document.getElementById("btnText").style.display = "none";
+          document.getElementById("spinner").style.display = "block";
+          document.querySelector(".login-btn").disabled = true;
+
+          try {
+            const response = await fetch("http://localhost:3000/api/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            console.log("LOGIN RESPONSE 👉", data);
+
+            if (response.ok) {
+              localStorage.setItem("token", data.token);
+              localStorage.setItem("user", JSON.stringify(data.user));
+
+              //  GUARDAR USUARIO COMPLETO
+              localStorage.setItem("user", JSON.stringify(data.user));
+
+              showToast("Inicio de sesión exitoso", "success");
+
+              setTimeout(() => {
+                window.location.href = "dashboard.html";
+              }, 1000);
+            } else {
+              showToast(
+                data.message || "Error en el inicio de sesión",
+                "error",
+              );
+            }
+          } catch (error) {
+            showToast("Error de conexión", "error");
+          } finally {
+            document.getElementById("btnText").style.display = "block";
+            document.getElementById("spinner").style.display = "none";
+            document.querySelector(".login-btn").disabled = false;
+          }
+        });
+
+      // Función para mostrar notificaciones toast
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = `toast show ${type}`;
+
+        setTimeout(() => {
+          toast.className = "toast";
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>

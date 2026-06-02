@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Historial de Ventas</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #4a00e0, #2563eb);
+        min-height: 100vh;
+        padding: 40px;
+        color: white;
+      }
+
+.container {
+  max-width: 1400px;
+  margin: auto;
+  padding: 30px;
+}
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+      }
+
+      .header h1 {
+        font-size: 40px;
+      }
+
+.btn {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+      .btn-back {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+.card {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  border-radius: 25px;
+  padding: 22px;
+  border: 1px solid rgba(255,255,255,.15);
+}
+
+      table {
+        width: 100%;
+        color: white;
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+td,
+th {
+  padding: 12px 14px;
+  font-size: 15px;
+}
+
+      .btn-view {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      }
+
+      .btn-ticket {
+        background: linear-gradient(135deg, #10b981, #059669);
+      }
+
+.status {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status i {
+  font-size: 10px;
+}
+
+.pagado {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.pendiente {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.cancelada {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+      .dataTables_wrapper {
+        color: white !important;
+      }
+
+      .dataTables_filter input,
+      .dataTables_length select {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        border-radius: 8px;
+      }
+      .dataTables_length label {
+        color: white;
+      }
+
+      .dataTables_length select {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 5px 10px;
+      }
+
+      .dataTables_length option {
+        color: black;
+      }
+
+.header-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.header-top h1{
+    flex:1;
+    text-align:center;
+    font-size:28px;
+    font-weight:600;
+    color:white;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+}
+
+.export-buttons{
+    display:flex;
+    gap:15px;
+}
+
+.btn-excel{
+    background:#10b981;
+    border:none;
+    color:white;
+    padding:14px 22px;
+    border-radius:14px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.btn-pdf{
+    background:#ef4444;
+    border:none;
+    color:white;
+    padding:14px 22px;
+    border-radius:14px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.btn-volver{
+    background:rgba(255,255,255,.15);
+    border:none;
+    color:white;
+    padding:14px 22px;
+    border-radius:14px;
+    font-weight:700;
+    cursor:pointer;
+}
+.btn-cancel{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+}
+.dataTables_wrapper {
+  color: white;
+}
+
+.dataTables_filter input,
+.dataTables_length select {
+  background: rgba(255,255,255,.12) !important;
+  border: 1px solid rgba(255,255,255,.2) !important;
+  border-radius: 10px;
+  color: white !important;
+  padding: 6px 10px;
+}
+
+.dataTables_info,
+.dataTables_paginate,
+.dataTables_length label,
+.dataTables_filter label {
+  color: white !important;
+}
+
+.dataTables_paginate .paginate_button {
+  color: white !important;
+}
+
+.dataTables_paginate .paginate_button.current {
+  background: rgba(255,255,255,.15) !important;
+  border: 1px solid rgba(255,255,255,.15) !important;
+  border-radius: 10px;
+}
+
+table.dataTable tbody tr {
+  background: transparent !important;
+}
+
+table.dataTable.no-footer {
+  border-bottom: none !important;
+}
+    </style>
+  </head>
+
+  <body>
+<div class="header-top">
+    <button class="btn-volver" onclick="window.location.href='dashboard.html'">
+        <i class="fas fa-arrow-left"></i> Volver
+    </button>
+
+    <h1>
+        <i class="fas fa-cash-register"></i>
+        Historial de Ventas
+    </h1>
+
+    <div class="export-buttons">
+        <button id="btnExcel" class="btn-excel">
+            <i class="fas fa-file-excel"></i> Excel
+        </button>
+
+        <button id="btnPDF" class="btn-pdf">
+            <i class="fas fa-file-pdf"></i> PDF
+        </button>
+    </div>
+</div>
+
+      <div class="card">
+        <table id="tablaVentas">
+          <thead>
+            <tr>
+              <th>Folio</th>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Usuario</th>
+              <th>Total</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Método</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      async function cargarVentas() {
+        try {
+          const token = localStorage.getItem("token");
+
+          const res = await fetch("http://localhost:3000/api/ventas", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+
+          const data = await res.json();
+
+          if ($.fn.DataTable.isDataTable("#tablaVentas")) {
+            $("#tablaVentas").DataTable().destroy();
+          }
+
+          $("#tablaVentas").DataTable({
+            data: data,
+
+            columns: [
+              {
+                data: "folio",
+              },
+
+              {
+                data: "fecha_venta",
+
+                render: (data) => new Date(data).toLocaleString("es-MX"),
+              },
+
+              {
+                data: "cliente",
+
+                render: (data) => data || "Público General",
+              },
+
+              {
+                data: "usuario",
+              },
+
+              {
+                data: "total",
+
+                render: (data) => `$${Number(data).toLocaleString()}`,
+              },
+
+              {
+                data: "tipo_venta",
+              },
+
+              {
+                data: "estado",
+
+render: (data) => {
+
+  if (data === "pagado") {
+    return `
+      <span class="status pagado">
+        <i class="fas fa-circle"></i>
+        Pagado
+      </span>
+    `;
+  }
+
+  if (data === "cancelada") {
+    return `
+      <span class="status cancelada">
+        <i class="fas fa-circle"></i>
+        Cancelada
+      </span>
+    `;
+  }
+
+  return `
+    <span class="status pendiente">
+      <i class="fas fa-circle"></i>
+      Pendiente
+    </span>
+  `;
+},
+              },
+
+              {
+                data: "metodo_pago",
+              },
+
+              {
+                data: null,
+
+                render: function (data) {
+return `
+  <div style="display:flex; gap:10px;">
+
+    <button
+      class="btn btn-view"
+      onclick="verDetalle(${data.id_venta})"
+    >
+      <i class="fas fa-eye"></i>
+      Ver
+    </button>
+
+    <button
+      class="btn btn-ticket"
+      onclick="verTicket(${data.id_venta})"
+    >
+      <i class="fas fa-receipt"></i>
+      Ticket
+    </button>
+
+    ${ data.estado !== "cancelada"
+      ? `
+        <button
+          class="btn btn-cancel"
+          onclick="cancelarVenta(${data.id_venta})"
+        >
+          <i class="fas fa-ban"></i>
+          Cancelar
+        </button>
+      `
+      : ""
+    }
+
+  </div>
+`;
+                },
+              },
+            ],
+
+            pageLength: 5,
+
+            language: {
+              search: "Buscar:",
+              lengthMenu: "Mostrar _MENU_",
+              info: "Mostrando _START_ a _END_ de _TOTAL_",
+              paginate: {
+                next: "Siguiente",
+                previous: "Anterior",
+              },
+            },
+          });
+        } catch (error) {
+          console.error(error);
+
+          Swal.fire("Error", "No se pudieron cargar las ventas", "error");
+        }
+      }
+
+      function verTicket(id) {
+        window.open(`ticket.html?id=${id}`, "_blank");
+      }
+
+      async function verDetalle(id) {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`/api/ventas/${id}`, {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        const data = await res.json();
+
+        let html = "";
+
+        data.detalles.forEach((item) => {
+          html += `
+            <div style="
+              margin-bottom:15px;
+              padding:15px;
+              border-radius:12px;
+              background:rgba(255,255,255,0.08);
+              text-align:left;
+            ">
+
+              <b>Equipo:</b>
+              ${item.marca}
+              ${item.modelo}
+              ${item.color || ""}
+              ${item.capacidad || ""}
+              <br><br>
+
+              <b>IMEI:</b>
+              ${item.numero_imei || "N/A"}
+              <br><br>
+
+              <b>Precio:</b>
+              $${Number(item.precio_venta).toLocaleString()}
+
+            </div>
+          `;
+        });
+
+        Swal.fire({
+          title: `
+            <span style="font-size:24px;">
+              Detalle de Venta
+            </span>
+          `,
+
+          html,
+
+          width: 700,
+
+          background: "#2d1b69",
+
+          color: "white",
+
+          confirmButtonColor: "#7c3aed",
+        });
+      }
+document.getElementById("btnExcel").addEventListener("click", async () => {
+
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+        "http://localhost:3000/api/ventas",
+        {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        }
+    );
+
+    const ventas = await res.json();
+
+    const datos = [];
+
+ventas.forEach(v => {
+
+    if (v.detalles && v.detalles.length > 0) {
+
+        v.detalles.forEach(d => {
+
+            datos.push({
+
+                Folio: v.folio,
+
+                Fecha:
+                    new Date(v.fecha_venta)
+                    .toLocaleString("es-MX"),
+
+                Cliente:
+                    v.cliente || "Público General",
+
+                Usuario:
+                    v.usuario,
+
+                Equipo:
+                    `${d.marca} ${d.modelo} ${d.color || ""} ${d.capacidad || ""}`,
+
+                IMEI:
+                    d.numero_imei || "N/A",
+
+                Metodo:
+                    v.metodo_pago,
+
+                Estado:
+                    v.estado,
+
+                Total:
+                    Number(v.total)
+
+            });
+
+        });
+
+    }
+
+});
+
+    const ws =
+        XLSX.utils.json_to_sheet(datos);
+
+    const wb =
+        XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+        wb,
+        ws,
+        "Ventas"
+    );
+
+    XLSX.writeFile(
+        wb,
+        "historial_completo_ventas.xlsx"
+    );
+
+});
+document.getElementById("btnPDF").addEventListener("click", async () => {
+
+    try {
+
+        const { jsPDF } = window.jspdf;
+
+        const doc = new jsPDF("landscape");
+
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(
+            "http://localhost:3000/api/ventas",
+            {
+                headers: {
+                    Authorization: "Bearer " + token
+                }
+            }
+        );
+
+        const ventas = await res.json();
+
+        let body = [];
+
+        ventas.forEach(v => {
+
+            if (v.detalles && v.detalles.length > 0) {
+
+                v.detalles.forEach(item => {
+
+                    body.push([
+
+                        v.folio,
+
+                        new Date(v.fecha_venta)
+                            .toLocaleString("es-MX"),
+
+                        v.cliente || "Público General",
+
+                        v.usuario,
+
+                        `${item.marca}
+                        ${item.modelo}
+                        ${item.color || ""}
+                        ${item.capacidad || ""}`,
+
+                        item.numero_imei || "N/A",
+
+                        v.metodo_pago,
+
+                        v.estado,
+
+                        `$${Number(v.total)
+                            .toLocaleString()}`
+
+                    ]);
+
+                });
+
+            }
+
+        });
+
+        doc.setFontSize(22);
+
+        doc.text(
+            "Historial Completo de Ventas",
+            14,
+            15
+        );
+
+        doc.autoTable({
+
+            startY: 25,
+
+            head: [[
+                "Folio",
+                "Fecha",
+                "Cliente",
+                "Usuario",
+                "Equipo",
+                "IMEI",
+                "Método",
+                "Estado",
+                "Total"
+            ]],
+
+            body,
+
+            styles: {
+                fontSize: 8
+            },
+
+            headStyles: {
+                fillColor: [79, 70, 229]
+            }
+
+        });
+
+        doc.save(
+            "historial_completo_ventas.pdf"
+        );
+
+    } catch(error) {
+
+        console.error(error);
+
+        Swal.fire(
+            "Error",
+            "No se pudo generar el PDF",
+            "error"
+        );
+
+    }
+
+});
+async function cancelarVenta(id) {
+
+  const confirmacion = await Swal.fire({
+    title: "¿Cancelar venta?",
+    text: "Los equipos volverán a inventario",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#dc2626",
+    cancelButtonColor: "#6b7280",
+    confirmButtonText: "Sí, cancelar",
+    cancelButtonText: "No"
+  });
+
+  if (!confirmacion.isConfirmed) return;
+
+  try {
+
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      `http://localhost:3000/api/ventas/cancelar/${id}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message);
+    }
+
+    Swal.fire(
+      "Cancelada",
+      data.message,
+      "success"
+    );
+
+    cargarVentas();
+
+  } catch(error) {
+
+    console.error(error);
+
+    Swal.fire(
+      "Error",
+      error.message,
+      "error"
+    );
+
+  }
+
+}
+
+      document.addEventListener("DOMContentLoaded", cargarVentas);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </body>
+</html>

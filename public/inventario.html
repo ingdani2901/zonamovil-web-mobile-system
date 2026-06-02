@@ -1,0 +1,1696 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventario | ZON@MOVIL</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+    <style>
+      :root {
+        --primary: #4a00e0;
+        --secondary: #8e2de2;
+        --accent: #2575fc;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --light: #f8fafc;
+        --dark: #1e293b;
+        --gray: #64748b;
+        --light-gray: #e2e8f0;
+        --card-bg: rgba(255, 255, 255, 0.15);
+        --card-border: rgba(255, 255, 255, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          var(--secondary),
+          var(--primary),
+          var(--accent)
+        );
+        background-size: 300% 300%;
+        animation: gradientMove 15s ease infinite;
+        color: white;
+        overflow-x: hidden;
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: auto;
+        padding: 30px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        border: none;
+        outline: none;
+      }
+
+      .btn i {
+        font-size: 14px;
+      }
+
+      .btn-back {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-back:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(-3px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, var(--accent), var(--primary));
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn-success {
+        background: linear-gradient(45deg, var(--success), #059669);
+        color: white;
+      }
+
+      .btn-danger {
+        background: linear-gradient(45deg, var(--danger), #dc2626);
+        color: white;
+      }
+
+      .card {
+        background: var(--card-bg);
+        backdrop-filter: blur(15px);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.5s ease;
+        border: 1px solid var(--card-border);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .search-container {
+        margin-bottom: 25px;
+        position: relative;
+      }
+
+      .search-container i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 12px 20px 12px 45px;
+        border-radius: 12px;
+        border: none;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s;
+        backdrop-filter: blur(5px);
+      }
+
+      .search-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+      }
+
+      .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+        border-radius: 12px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+      }
+
+      th {
+        text-align: left;
+        padding: 15px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(5px);
+      }
+
+      td {
+        padding: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .status i {
+        font-size: 10px;
+      }
+
+      .disponible {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+
+      .vendido {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+      }
+
+      .reparacion {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+        border: 1px solid rgba(245, 158, 11, 0.4);
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+      }
+
+      .action-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      .action-btn.edit {
+        color: var(--accent);
+      }
+
+      .action-btn.delete {
+        color: var(--danger);
+      }
+
+      .action-btn.complete {
+        color: var(--success);
+      }
+
+      .fab {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, var(--success), #059669);
+        border: none;
+        color: white;
+        font-size: 22px;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+      }
+
+      .fab:hover {
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      }
+
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+      }
+
+      #confirmModal {
+        z-index: 2000;
+      }
+
+      .modal-content {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border-radius: 25px;
+        padding: 30px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow:
+          0 0 40px rgba(138, 43, 226, 0.3),
+          0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: modalShow 0.3s ease;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .modal-title {
+        font-size: 24px;
+        font-weight: 600;
+        background: linear-gradient(90deg, #c084fc, #60a5fa);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .close-modal {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .close-modal:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        transform: rotate(90deg) scale(1.1);
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: #8b5cf6;
+        box-shadow:
+          0 0 10px rgba(139, 92, 246, 0.6),
+          0 0 20px rgba(139, 92, 246, 0.3);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      textarea.form-control {
+        min-height: 120px;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      .modal-footer .btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border-radius: 12px;
+        padding: 12px 22px;
+        box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+        transition: 0.3s;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 15px 35px rgba(139, 92, 246, 0.6);
+      }
+
+      @keyframes modalShow {
+        from {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--dark);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+        opacity: 0;
+        transition: all 0.3s;
+      }
+
+      .toast.show {
+        opacity: 1;
+        bottom: 50px;
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .modal-content {
+          width: 90%;
+          padding: 20px;
+        }
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .estado-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .estado-btn {
+        padding: 10px 16px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .estado-btn:hover {
+        background: rgba(139, 92, 246, 0.3);
+      }
+
+      .estado-btn.active {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+      }
+
+      .eliminado {
+        background: rgba(239, 68, 68, 0.2) !important;
+        border-left: 4px solid #ef4444;
+      }
+
+      .filtro-btn {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border-radius: 12px;
+        padding: 10px 18px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .filtro-btn.active {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        transform: scale(1.05);
+      }
+      /* 🔥 ARREGLAR SELECT (estado + datatable) */
+      select,
+      .dataTables_length select {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      /* Opciones del select */
+      select option {
+        background: #1e1e2f;
+        color: white;
+      }
+
+      /* 🔥 INPUT BUSCAR DATATABLE */
+      .dataTables_filter input {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border-radius: 8px;
+        border: none;
+        padding: 5px 10px;
+      }
+
+      /* 🔥 TEXTO DATATABLE */
+      .dataTables_info,
+      .dataTables_length,
+      .dataTables_filter,
+      .dataTables_paginate {
+        color: white !important;
+      }
+
+      /* 🔥 BOTONES PAGINACIÓN */
+      .dataTables_paginate .paginate_button {
+        color: white !important;
+      }
+      select {
+        appearance: none;
+        cursor: pointer;
+      }
+      .sim-badge {
+        padding: 5px 10px;
+        border-radius: 10px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .sim-badge.fisico {
+        background: #3b82f6;
+        color: white;
+      }
+
+      .sim-badge.esim {
+        background: #10b981;
+        color: white;
+      }
+
+      .sim-badge.dual {
+        background: #f59e0b;
+        color: white;
+      }
+      .btn-success {
+        background: linear-gradient(45deg, var(--success), #059669);
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="utils/auth.js"></script>
+    <div class="container">
+      <div class="header">
+        <button
+          class="btn btn-back"
+          onclick="window.location = 'dashboard.html'"
+        >
+          <i class="fa fa-arrow-left"></i> Volver
+        </button>
+
+        <h1><i class="fas fa-boxes"></i> Inventario</h1>
+
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="abrirModal()">
+            <i class="fa fa-plus"></i> Nuevo Equipo
+          </button>
+          <button
+            class="btn btn-success"
+            id="btnStock"
+            onclick="abrirInventarioAdmin()"
+            style="display: none"
+          >
+            <i class="fas fa-boxes"></i>
+            Ver Stock
+          </button>
+          <button class="btn btn-success" onclick="exportarExcel()">
+            <i class="fas fa-file-excel"></i>
+            Excel
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 15px">
+        <button
+          class="filtro-btn active"
+          onclick="cambiarFiltro(this, 'activas')"
+        >
+          Activas
+        </button>
+        <button class="filtro-btn" onclick="cambiarFiltro(this, 'eliminadas')">
+          Eliminadas
+        </button>
+        <button class="filtro-btn" onclick="cambiarFiltro(this, 'todas')">
+          Todas
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="table-responsive">
+          <table id="tablaData">
+            <thead>
+              <tr>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Color</th>
+                <th>Capacidad</th>
+                <th>Precio</th>
+                <th>Sucursal</th>
+                <th>SIM</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaEquipos">
+              <!-- Datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para nuevo equipo -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title"><i class="fas fa-box"></i> Nuevo Equipo</h2>
+          <button class="close-modal" onclick="cerrarModal()">&times;</button>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Marca *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="marca"
+              placeholder="Samsung, Apple..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Modelo *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="modelo"
+              placeholder="Modelo"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Color</label>
+            <input
+              type="text"
+              class="form-control"
+              id="color"
+              placeholder="Negro, Azul, etc."
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Capacidad</label>
+            <input
+              type="text"
+              class="form-control"
+              id="capacidad"
+              placeholder="64GB, 128GB, etc."
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Precio Compra *</label>
+            <input
+              type="number"
+              class="form-control"
+              id="precio_compra"
+              placeholder="Ej: 5000"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Precio Venta *</label>
+            <input
+              type="number"
+              class="form-control"
+              id="precio_venta"
+              placeholder="Ej: 7000"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>IMEI 1 *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="imei1"
+              placeholder="15 dígitos"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>IMEI 2</label>
+            <input
+              type="text"
+              class="form-control"
+              id="imei2"
+              placeholder="15 dígitos"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Estado *</label>
+          <select class="form-control" id="estado">
+            <option value="disponible">Disponible</option>
+            <option value="vendido">Vendido</option>
+            <option value="apartado">Apartado</option>
+            <option value="en_transferencia">En transferencia</option>
+            <option value="defectuoso">Defectuoso</option>
+            <option value="retirado">Retirado</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tipo de SIM *</label>
+          <select id="tipo_sim" class="form-control">
+            <option value="fisico">Chip físico</option>
+            <option value="esim">Solo eSIM</option>
+            <option value="dual">Físico + eSIM</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn" onclick="cerrarModal()">Cancelar</button>
+          <button class="btn btn-primary" onclick="guardarEquipo()">
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+    <!-- MODAL STOCK -->
+    <div class="modal" id="modalStock">
+      <div class="modal-content" style="max-width: 1200px">
+        <div class="modal-header">
+          <h2 class="modal-title">📦 Stock General</h2>
+
+          <button class="close-modal" onclick="cerrarStock()">&times;</button>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Color</th>
+                <th>Capacidad</th>
+                <th>Stock</th>
+                <th>Disponibles</th>
+                <th>Vendidos</th>
+                <th>Apartados</th>
+                <th>Precio Compra</th>
+                <th>Precio Venta</th>
+                <th>IMEIs</th>
+              </tr>
+            </thead>
+            <div style="margin-bottom: 20px">
+              <input
+                type="text"
+                id="buscarStock"
+                placeholder="Buscar producto..."
+                class="form-control"
+                onkeyup="filtrarStock()"
+              />
+            </div>
+
+            <tbody id="tablaStock"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- MODAL IMEIS -->
+    <div class="modal" id="modalImeis">
+      <div class="modal-content" style="max-width: 1000px">
+        <div class="modal-header">
+          <h2 class="modal-title">📱 IMEIs del Producto</h2>
+
+          <button class="close-modal" onclick="cerrarImeis()">&times;</button>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>IMEI</th>
+                <th>Estado</th>
+                <th>SIM</th>
+                <th>Sucursal</th>
+              </tr>
+            </thead>
+
+            <tbody id="tablaImeis"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL CONFIRM -->
+    <div id="confirmModal" class="modal">
+      <div class="modal-content">
+        <h3 id="confirmText">¿Seguro?</h3>
+        <div
+          style="
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+          "
+        >
+          <button class="btn" onclick="cerrarConfirm()">Cancelar</button>
+          <button class="btn btn-danger" id="confirmBtn">Aceptar</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      let equipos = [];
+      let filtroEstado = "activas";
+      let editandoId = null;
+      let stockGeneral = [];
+
+      const tablaEquipos = document.getElementById("tablaEquipos");
+      const toast = document.getElementById("toast");
+
+      function cambiarFiltro(btn, filtro) {
+        filtroEstado = filtro;
+        document
+          .querySelectorAll(".filtro-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderizarTabla(equipos);
+      }
+
+      function mostrarConfirm(mensaje, callback) {
+        document.getElementById("confirmText").innerText = mensaje;
+        document.getElementById("confirmBtn").onclick = () => {
+          callback();
+          cerrarConfirm();
+        };
+        document.getElementById("confirmModal").style.display = "flex";
+      }
+
+      function cerrarConfirm() {
+        document.getElementById("confirmModal").style.display = "none";
+      }
+
+      function abrirModal() {
+        limpiarFormulario();
+        document.getElementById("modal").style.display = "flex";
+      }
+
+      function cerrarModal() {
+        limpiarFormulario();
+        document.getElementById("modal").style.display = "none";
+        editandoId = null;
+      }
+
+      function cerrarStock() {
+        document.getElementById("modalStock").style.display = "none";
+      }
+      function cerrarImeis() {
+        document.getElementById("modalImeis").style.display = "none";
+      }
+      function filtrarStock() {
+        const texto = document
+          .getElementById("buscarStock")
+          .value.toLowerCase();
+
+        const filtrados = stockGeneral.filter((p) => {
+          return (
+            p.codigo?.toLowerCase().includes(texto) ||
+            p.marca?.toLowerCase().includes(texto) ||
+            p.modelo?.toLowerCase().includes(texto) ||
+            p.color?.toLowerCase().includes(texto) ||
+            p.capacidad?.toLowerCase().includes(texto)
+          );
+        });
+
+        renderStock(filtrados);
+      }
+
+      function showToast(msg, type = "success") {
+        toast.textContent = msg;
+        toast.className = "toast show " + type;
+        setTimeout(() => (toast.className = "toast"), 3000);
+      }
+
+      function limpiarFormulario() {
+        document.getElementById("marca").value = "";
+        document.getElementById("modelo").value = "";
+        document.getElementById("color").value = "";
+        document.getElementById("capacidad").value = "";
+        document.getElementById("precio_compra").value = "";
+        document.getElementById("precio_venta").value = "";
+        document.getElementById("imei1").value = "";
+        document.getElementById("imei2").value = "";
+        document.getElementById("estado").value = "disponible";
+      }
+
+      async function cargarEquipos() {
+        try {
+          const token = localStorage.getItem("token");
+          const res = await fetch("http://localhost:3000/api/inventario", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+          const data = await res.json();
+          equipos = data;
+          renderizarTabla(data);
+        } catch (error) {
+          console.error(error);
+          showToast("Error cargando equipos", "error");
+        }
+      }
+      function getEstadoBadge(estado) {
+        if (estado === "disponible") {
+          return `<span class="status disponible">● Disponible</span>`;
+        }
+        if (estado === "vendido") {
+          return `<span class="status vendido">● Vendido</span>`;
+        }
+        if (estado === "defectuoso") {
+          return `<span class="status reparacion">● Defectuoso</span>`;
+        }
+        if (estado === "apartado") {
+          return `<span class="status reparacion">● Apartado</span>`;
+        }
+        if (estado === "en_transferencia") {
+          return `<span class="status reparacion">● En transferencia</span>`;
+        }
+        return estado;
+      }
+
+      function renderizarTabla(data) {
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        let filtrados = data;
+
+        if (filtroEstado === "activas") {
+          filtrados = data.filter((e) => !e.eliminado);
+        }
+
+        if (filtroEstado === "eliminadas") {
+          filtrados = data.filter((e) => e.eliminado);
+        }
+
+        if ($.fn.DataTable.isDataTable("#tablaData")) {
+          $("#tablaData").DataTable().destroy();
+        }
+
+        $("#tablaData").DataTable({
+          destroy: true,
+          data: filtrados,
+
+          columns: [
+            { data: "marca" },
+
+            { data: "modelo" },
+
+            {
+              data: "color",
+              render: (data) => data || "N/A",
+            },
+
+            {
+              data: "capacidad",
+              render: (data) => data || "N/A",
+            },
+
+            {
+              data: "precio_venta",
+              render: (data) => `$${Number(data || 0).toFixed(2)}`,
+            },
+
+            {
+              data: "sucursal",
+              render: (data) => data || "Sin sucursal",
+            },
+
+            {
+              data: "tipo_sim",
+              render: function (data) {
+                return `
+                    <span class="sim-badge ${data}">
+                        ${
+                          data === "fisico"
+                            ? "📱 Físico"
+                            : data === "esim"
+                              ? "📶 eSIM"
+                              : data === "dual"
+                                ? "📱+📶 Dual"
+                                : "N/A"
+                        }
+                    </span>
+                `;
+              },
+            },
+
+            {
+              data: "estado",
+              render: function (data) {
+                return getEstadoBadge(data);
+              },
+            },
+
+            {
+              data: null,
+              render: function (data) {
+                const user = JSON.parse(localStorage.getItem("user"));
+
+                if (user.id_rol != 1) {
+                  return "";
+                }
+
+                if (data.eliminado) {
+                  return `
+                        <div class="actions">
+                            <button
+                                class="action-btn complete"
+                                onclick="restaurarEquipo(${data.id_equipo})"
+                            >
+                                <i class="fas fa-undo"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="actions">
+
+                        <button
+                            class="action-btn edit"
+                            onclick="editarEquipo(${data.id_equipo})"
+                        >
+                            <i class="fas fa-edit"></i>
+                        </button>
+
+                        <button
+                            class="action-btn delete"
+                            onclick="eliminarEquipo(${data.id_equipo})"
+                        >
+                            <i class="fas fa-trash"></i>
+                        </button>
+
+                    </div>
+                `;
+              },
+            },
+          ],
+          pageLength: 5,
+
+          lengthMenu: [5, 10, 25, 50],
+
+          deferRender: true,
+
+          processing: true,
+
+          language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_",
+            info: "Mostrando _START_ a _END_ de _TOTAL_",
+            paginate: {
+              next: "Siguiente",
+              previous: "Anterior",
+            },
+          },
+        });
+      }
+
+      async function guardarEquipo() {
+        const marca = document.getElementById("marca").value.trim();
+        const modelo = document.getElementById("modelo").value.trim();
+        const color = document.getElementById("color").value.trim();
+        const capacidad = document.getElementById("capacidad").value.trim();
+        const precioCompra = parseFloat(
+          document.getElementById("precio_compra").value,
+        );
+        const precioVenta = parseFloat(
+          document.getElementById("precio_venta").value,
+        );
+        const imei1 = document.getElementById("imei1").value.trim();
+        const imei2 = document.getElementById("imei2").value.trim();
+        const estado = document.getElementById("estado").value;
+        const tipo_sim = document.getElementById("tipo_sim").value;
+
+        // 🔥 VALIDACIONES
+
+        if (!marca || !modelo) {
+          return showToast("Marca y modelo obligatorios", "warning");
+        }
+
+        if (isNaN(precioCompra) || precioCompra <= 0) {
+          return showToast("Precio compra inválido", "warning");
+        }
+
+        if (isNaN(precioVenta) || precioVenta <= 0) {
+          return showToast("Precio venta inválido", "warning");
+        }
+
+        if (precioCompra > precioVenta) {
+          return showToast(
+            "El precio de compra NO puede ser mayor al de venta",
+            "error",
+          );
+        }
+
+        // IMEI solo números
+        if (!/^\d{15}$/.test(imei1)) {
+          return showToast("IMEI 1 debe tener 15 números", "warning");
+        }
+
+        if (imei2 && !/^\d{15}$/.test(imei2)) {
+          return showToast("IMEI 2 inválido", "warning");
+        }
+
+        // 🔥 NO IMEIS DUPLICADOS
+        const existeImei = equipos.some(
+          (e) =>
+            e.id_equipo !== editandoId && //  IGNORA EL MISMO
+            e.imeis?.some(
+              (i) => i.numero_imei === imei1 || i.numero_imei === imei2,
+            ),
+        );
+
+        if (existeImei) {
+          return showToast("IMEI ya registrado", "error");
+        }
+        if (imei1 === imei2) {
+          return showToast("IMEIs no pueden ser iguales", "warning");
+        }
+
+        if (precioCompra < 0 || precioVenta < 0) {
+          return showToast("No se permiten valores negativos", "error");
+        }
+
+        // 🔥 NO MISMO MODELO + MARCA
+        const duplicado = equipos.some(
+          (e) =>
+            e.marca.toLowerCase() === marca.toLowerCase() &&
+            e.modelo.toLowerCase() === modelo.toLowerCase(),
+        );
+
+        if (duplicado && !editandoId) {
+          return showToast("Ese equipo ya existe", "warning");
+        }
+
+        // 🔥 GUARDAR
+        try {
+          const token = localStorage.getItem("token");
+
+          // 🔥 DECIDIR SI ES CREATE O UPDATE
+          const url = editandoId
+            ? `http://localhost:3000/api/inventario/${editandoId}`
+            : "http://localhost:3000/api/inventario";
+
+          const method = editandoId ? "PUT" : "POST";
+
+          const res = await fetch(url, {
+            method,
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+              marca,
+              modelo,
+              color,
+              capacidad,
+              precio_compra: precioCompra,
+              precio_venta: precioVenta,
+              estado,
+              imei1,
+              imei2,
+              tipo_sim,
+            }),
+          });
+
+          if (!res.ok) throw new Error("Error guardando");
+
+          cerrarModal();
+          showToast(
+            editandoId ? "Equipo actualizado" : "Equipo guardado",
+            "success",
+          );
+          cargarEquipos();
+        } catch (error) {
+          console.error(error);
+          showToast("Error al guardar", "error");
+        }
+      }
+
+      async function eliminarEquipo(id) {
+        Swal.fire({
+          title: "¿Estás seguro?",
+          text: "¡Este equipo será marcado como eliminado!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, eliminar",
+          cancelButtonText: "Cancelar",
+          background: "rgba(255, 255, 255, 0.95)",
+          backdrop: "rgba(0, 0, 0, 0.5)",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const token = localStorage.getItem("token");
+
+              const response = await fetch(
+                `http://localhost:3000/api/inventario/${id}`,
+                {
+                  method: "DELETE",
+                  headers: {
+                    Authorization: "Bearer " + token,
+                  },
+                },
+              );
+
+              if (response.ok) {
+                showToast("Equipo eliminado correctamente", "success");
+                cargarEquipos();
+              } else {
+                const data = await response.json();
+                showToast(data.message || "Error al eliminar", "error");
+              }
+            } catch (error) {
+              console.error("Error:", error);
+              showToast("Error de conexión", "error");
+            }
+          }
+        });
+      }
+
+      async function restaurarEquipo(id) {
+        try {
+          const token = localStorage.getItem("token");
+
+          const response = await fetch(
+            `http://localhost:3000/api/inventario/restaurar/${id}`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            },
+          );
+
+          if (response.ok) {
+            showToast("Equipo restaurado correctamente", "success");
+            cargarEquipos();
+          } else {
+            const data = await response.json();
+            showToast(data.message || "Error al restaurar", "error");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          showToast("Error de conexión", "error");
+        }
+      }
+
+      function editarEquipo(id) {
+        const e = equipos.find((x) => x.id_equipo == id);
+        if (!e) return;
+
+        limpiarFormulario();
+        editandoId = id;
+
+        abrirModal();
+
+        document.getElementById("marca").value = e.marca || "";
+        document.getElementById("modelo").value = e.modelo || "";
+        document.getElementById("color").value = e.color || "";
+        document.getElementById("capacidad").value = e.capacidad || "";
+        document.getElementById("precio_compra").value = e.precio_compra || "";
+        document.getElementById("precio_venta").value = e.precio_venta || "";
+        document.getElementById("estado").value = e.estado || "disponible";
+        document.getElementById("tipo_sim").value = e.tipo_sim || "fisico";
+
+        // Obtener IMEIs si existen
+        const equipo = equipos.find((e) => e.id_equipo === id);
+
+        // 🔥 IMEIS DESDE ARRAY
+        const imei1 = equipo.imeis?.[0]?.numero_imei || "";
+        const imei2 = equipo.imeis?.[1]?.numero_imei || "";
+
+        // 🔥 SETEAR INPUTS
+        document.getElementById("imei1").value = imei1;
+        document.getElementById("imei2").value = imei2;
+      }
+
+      function renderStock(data) {
+        let html = "";
+
+        data.forEach((p) => {
+          html += `
+            <tr>
+                <td>${p.codigo || ""}</td>
+                <td>${p.marca}</td>
+                <td>${p.modelo}</td>
+                <td>${p.color || "N/A"}</td>
+                <td>${p.capacidad || "N/A"}</td>
+
+                <td>
+                    <span style="
+                        color:${p.stock_total <= 5 ? "#ef4444" : "#22c55e"};
+                        font-weight:bold;
+                    ">
+                        ${p.stock_total}
+                    </span>
+                </td>
+
+                <td>${p.disponibles}</td>
+                <td>${p.vendidos}</td>
+                <td>${p.apartados}</td>
+
+                <td>$${Number(p.precio_compra || 0).toFixed(2)}</td>
+                <td>$${Number(p.precio_venta || 0).toFixed(2)}</td>
+                <td>
+    <button
+        class="btn btn-primary"
+        onclick="verImeis(${p.id_producto})"
+    >
+        <i class="fas fa-mobile-alt"></i>
+        Ver IMEIs
+    </button>
+</td>
+            </tr>
+        `;
+        });
+
+        document.getElementById("tablaStock").innerHTML = html;
+      }
+      async function verImeis(idProducto) {
+        try {
+          const token = localStorage.getItem("token");
+
+          const res = await fetch(
+            `http://localhost:3000/api/inventario/imeis/${idProducto}`,
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            },
+          );
+
+          const data = await res.json();
+
+          let html = "";
+
+          data.forEach((e) => {
+            html += `
+                <tr>
+
+                    <td>
+                        ${e.marca} ${e.modelo}
+                        (${e.color || "N/A"} ${e.capacidad || ""})
+                    </td>
+
+                    <td>${e.numero_imei || "Sin IMEI"}</td>
+
+                    <td>
+                        ${getEstadoBadge(e.estado)}
+                    </td>
+
+                    <td>
+                        ${e.tipo_sim || "N/A"}
+                    </td>
+
+                    <td>
+                        ${e.sucursal || "Sin sucursal"}
+                    </td>
+
+                </tr>
+            `;
+          });
+
+          document.getElementById("tablaImeis").innerHTML = html;
+
+          document.getElementById("modalImeis").style.display = "flex";
+        } catch (error) {
+          console.error(error);
+
+          showToast("Error cargando IMEIs", "error");
+        }
+      }
+      async function abrirInventarioAdmin() {
+        try {
+          const token = localStorage.getItem("token");
+
+          const res = await fetch(
+            "http://localhost:3000/api/inventario/admin",
+            {
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            },
+          );
+
+          const data = await res.json();
+
+          stockGeneral = data;
+
+          renderStock(data);
+
+          document.getElementById("modalStock").style.display = "flex";
+        } catch (error) {
+          console.error(error);
+          showToast("Error cargando stock", "error");
+        }
+      }
+      function exportarExcel() {
+        const wb = XLSX.utils.book_new();
+
+        // =========================================
+        // RESUMEN GENERAL
+        // =========================================
+
+        const resumen = {};
+
+        equipos.forEach((e) => {
+          const suc = e.sucursal || "Sin sucursal";
+
+          if (!resumen[suc]) {
+            resumen[suc] = {
+              disponibles: 0,
+              vendidos: 0,
+              apartados: 0,
+              total: 0,
+            };
+          }
+
+          if (e.estado === "disponible") {
+            resumen[suc].disponibles++;
+          }
+
+          if (e.estado === "vendido") {
+            resumen[suc].vendidos++;
+          }
+
+          if (e.estado === "apartado") {
+            resumen[suc].apartados++;
+          }
+
+          resumen[suc].total += Number(e.precio_venta || 0);
+        });
+
+        const resumenData = [];
+
+        Object.keys(resumen).forEach((s) => {
+          resumenData.push({
+            Sucursal: s,
+
+            Disponibles: resumen[s].disponibles,
+
+            Vendidos: resumen[s].vendidos,
+
+            Apartados: resumen[s].apartados,
+
+            "Valor Inventario": `$${resumen[s].total.toFixed(2)}`,
+          });
+        });
+
+        const wsResumen = XLSX.utils.json_to_sheet(resumenData);
+
+        XLSX.utils.book_append_sheet(wb, wsResumen, "RESUMEN");
+
+        // =========================================
+        // HOJAS POR SUCURSAL
+        // =========================================
+
+        const sucursales = [...new Set(equipos.map((e) => e.sucursal))];
+
+        sucursales.forEach((sucursal) => {
+          const data = [];
+
+          equipos
+            .filter((e) => e.sucursal === sucursal)
+            .forEach((e) => {
+              const imeis = e.imeis?.map((i) => i.numero_imei).join(" | ");
+
+              data.push({
+                Estado: e.estado,
+
+                Marca: e.marca,
+
+                Modelo: e.modelo,
+
+                Color: e.color || "",
+
+                Capacidad: e.capacidad || "",
+
+                "Precio Compra": e.precio_compra || 0,
+
+                "Precio Venta": e.precio_venta || 0,
+
+                SIM: e.tipo_sim || "",
+
+                IMEIS: imeis || "Sin IMEIs",
+              });
+            });
+
+          // 🔥 ORDENAR
+          data.sort((a, b) => {
+            if (a.Estado < b.Estado) return -1;
+            if (a.Estado > b.Estado) return 1;
+
+            return 0;
+          });
+
+          const ws = XLSX.utils.json_to_sheet(data);
+
+          // 🔥 ANCHO COLUMNAS
+          ws["!cols"] = [
+            { wch: 15 },
+            { wch: 15 },
+            { wch: 20 },
+            { wch: 15 },
+            { wch: 15 },
+            { wch: 15 },
+            { wch: 15 },
+            { wch: 12 },
+            { wch: 50 },
+          ];
+
+          XLSX.utils.book_append_sheet(wb, ws, sucursal);
+        });
+
+        // =========================================
+        // DESCARGAR
+        // =========================================
+
+        XLSX.writeFile(wb, "inventario_zonamovil.xlsx");
+      }
+
+      // Inicialización
+      document.addEventListener("DOMContentLoaded", function () {
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        if (user.id_rol == 1) {
+          document.getElementById("btnStock").style.display = "flex";
+        }
+
+        cargarEquipos();
+      });
+    </script>
+  </body>
+</html>

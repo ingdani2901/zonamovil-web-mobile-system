@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Administrar Compras</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+
+        background: linear-gradient(135deg, #4a00e0, #2563eb);
+
+        min-height: 100vh;
+
+        padding: 40px;
+        overflow-x: hidden;
+        overflow-y: auto;
+      }
+
+      .container {
+        max-width: 1400px;
+
+        margin: auto;
+      }
+
+      .header {
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        margin-bottom: 30px;
+
+        color: white;
+      }
+
+      .header h1 {
+        font-size: 42px;
+
+        font-weight: 700;
+      }
+      .header-actions {
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        border: none;
+      }
+
+      .btn-back {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-back:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(-3px);
+      }
+
+      .btn-success {
+        background: linear-gradient(45deg, #10b981, #059669);
+        color: white;
+      }
+
+      .btn-danger {
+        background: linear-gradient(45deg, #ef4444, #dc2626);
+        color: white;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.12);
+
+        backdrop-filter: blur(14px);
+
+        border: 1px solid rgba(255, 255, 255, 0.1);
+
+        border-radius: 25px;
+
+        padding: 30px;
+
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      .search {
+        width: 100%;
+
+        padding: 16px 20px;
+
+        border: none;
+
+        outline: none;
+
+        border-radius: 14px;
+
+        font-size: 16px;
+
+        margin-bottom: 25px;
+      }
+
+      table {
+        width: 100%;
+
+        border-collapse: collapse;
+
+        color: white;
+      }
+
+      th {
+        background: rgba(255, 255, 255, 0.12);
+
+        padding: 18px;
+
+        text-align: left;
+
+        font-size: 15px;
+      }
+
+      td {
+        padding: 18px;
+
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .actions {
+        display: flex;
+
+        gap: 10px;
+      }
+
+      .btn-ticket {
+        background: linear-gradient(135deg, #10b981, #059669);
+      }
+
+      .btn-view {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      }
+
+      .total {
+        font-weight: 700;
+
+        color: #facc15;
+      }
+      .table-responsive {
+        overflow-x: auto;
+      }
+
+      .dataTables_filter input {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border-radius: 8px;
+        border: none;
+        padding: 5px 10px;
+      }
+
+      .dataTables_info,
+      .dataTables_length,
+      .dataTables_filter,
+      .dataTables_paginate {
+        color: white !important;
+      }
+
+      .dataTables_paginate .paginate_button {
+        color: white !important;
+      }
+
+      .dataTables_length select {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: none;
+        border-radius: 8px;
+      }
+      @media (max-width: 768px) {
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+
+        .header-actions {
+          width: 100%;
+          justify-content: flex-start;
+          flex-wrap: wrap;
+        }
+
+        .header h1 {
+          font-size: 32px;
+        }
+      }
+      .btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(139, 92, 246, 0.4);
+      }
+      .dataTables_length label {
+        color: white;
+      }
+
+      .dataTables_length select {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 5px 10px;
+      }
+
+      .dataTables_length option {
+        color: black;
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  </head>
+
+  <body>
+    <script src="/utils/auth.js"></script>
+
+    <div class="container">
+      <div class="header">
+        <button
+          class="btn btn-back"
+          onclick="window.location = 'dashboard.html'"
+        >
+          <i class="fa fa-arrow-left"></i>
+          Volver
+        </button>
+
+        <h1>
+          <i class="fa fa-cart-shopping"></i>
+          Historial de Compras
+        </h1>
+
+        <div class="header-actions">
+          <button class="btn btn-success" onclick="exportarExcelCompras()">
+            <i class="fas fa-file-excel"></i>
+            Excel
+          </button>
+
+          <button class="btn btn-danger" onclick="exportarPDFCompras()">
+            <i class="fas fa-file-pdf"></i>
+            PDF
+          </button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="table-responsive">
+          <table id="tablaCompras" class="display">
+            <thead>
+              <tr>
+                <th>Folio</th>
+                <th>Fecha</th>
+                <th>Proveedor</th>
+                <th>Usuario</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script>
+      async function cargarCompras() {
+        try {
+          const token = localStorage.getItem("token");
+
+          const response = await fetch("http://localhost:3000/api/compras", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+
+          const data = await response.json();
+          console.log(data);
+
+          // 🔥 destruir si ya existe
+          if ($.fn.DataTable.isDataTable("#tablaCompras")) {
+            $("#tablaCompras").DataTable().destroy();
+          }
+
+          $("#tablaCompras").DataTable({
+            data: data,
+
+            columns: [
+              {
+                data: "folio",
+              },
+
+              {
+                data: "fecha",
+
+                render: function (data) {
+                  return new Date(data).toLocaleDateString();
+                },
+              },
+
+              {
+                data: "proveedor",
+              },
+
+              {
+                data: "usuario",
+              },
+
+              {
+                data: "total",
+
+                render: function (data) {
+                  return `$${Number(data).toFixed(2)}`;
+                },
+              },
+              {
+                data: "estado",
+
+                render: function (data) {
+                  if (data === "cancelada") {
+                    return `
+                <span style="
+                    background:#dc2626;
+                    padding:6px 12px;
+                    border-radius:10px;
+                    font-weight:bold;
+                ">
+                    Cancelada
+                </span>
+            `;
+                  }
+
+                  return `
+            <span style="
+                background:#059669;
+                padding:6px 12px;
+                border-radius:10px;
+                font-weight:bold;
+            ">
+                Activa
+            </span>
+        `;
+                },
+              },
+
+              {
+                data: null,
+
+                render: function (data) {
+                  return `
+
+<div style="display:flex; gap:10px;">
+
+    <button
+        class="btn btn-view"
+        onclick="verTicket(${data.id_compra})"
+    >
+        <i class="fas fa-eye"></i>
+        Ver
+    </button>
+
+    ${
+      data.estado !== "cancelada"
+        ? `
+      <button
+          class="btn btn-danger"
+          onclick="cancelarCompra(${data.id_compra})"
+      >
+          <i class="fas fa-ban"></i>
+          Cancelar
+      </button>
+      `
+        : ""
+    }
+
+</div>
+`;
+                },
+              },
+            ],
+            responsive: true,
+            autoWidth: false,
+            scrollX: true,
+
+            pageLength: 5,
+
+            language: {
+              search: "Buscar:",
+
+              lengthMenu: "Mostrar _MENU_",
+
+              info: "Mostrando _START_ a _END_ de _TOTAL_",
+
+              paginate: {
+                next: "Siguiente",
+
+                previous: "Anterior",
+              },
+            },
+          });
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      function verTicket(id) {
+        window.open(`ticket_compra.html?id=${id}`, "_blank");
+      }
+      async function cancelarCompra(id) {
+        const confirmacion = await Swal.fire({
+          title: "¿Cancelar compra?",
+
+          text: "Los equipos serán eliminados del inventario",
+
+          icon: "warning",
+
+          showCancelButton: true,
+
+          confirmButtonText: "Sí, cancelar",
+
+          cancelButtonText: "No",
+        });
+
+        if (!confirmacion.isConfirmed) return;
+
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(`/api/compras/cancelar/${id}`, {
+          method: "PUT",
+
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          Swal.fire("Cancelada", "La compra fue cancelada", "success");
+
+          cargarCompras();
+        } else {
+          Swal.fire("Error", data.error, "error");
+        }
+      }
+      async function exportarExcelCompras() {
+        const token = localStorage.getItem("token");
+
+        const tabla = $("#tablaCompras").DataTable().rows().data().toArray();
+
+        let excel = [];
+
+        for (const compra of tabla) {
+          const res = await fetch(`/api/compras/ticket/${compra.id_compra}`, {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+
+          const detalle = await res.json();
+
+          detalle.detalle.forEach((e) => {
+            excel.push({
+              Folio: compra.folio,
+
+              Fecha: new Date(compra.fecha).toLocaleString(),
+
+              Proveedor: compra.proveedor,
+
+              Usuario: compra.usuario,
+
+              Equipo: `${e.marca} ${e.modelo} ${e.color} ${e.capacidad}`,
+
+              IMEI: e.numero_imei,
+
+              Sucursal: e.sucursal,
+
+              PrecioCompra: Number(e.precio_compra),
+
+              TotalCompra: Number(compra.total),
+            });
+          });
+        }
+
+        const wb = XLSX.utils.book_new();
+
+        const ws = XLSX.utils.json_to_sheet(excel);
+
+        XLSX.utils.book_append_sheet(wb, ws, "Compras");
+
+        XLSX.writeFile(wb, "historial_completo_compras.xlsx");
+      }
+      async function exportarPDFCompras() {
+        const { jsPDF } = window.jspdf;
+
+        const doc = new jsPDF("landscape");
+
+        const token = localStorage.getItem("token");
+
+        const tabla = $("#tablaCompras").DataTable().rows().data().toArray();
+
+        let body = [];
+
+        for (const compra of tabla) {
+          const res = await fetch(`/api/compras/ticket/${compra.id_compra}`, {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+
+          const detalle = await res.json();
+
+          detalle.detalle.forEach((e) => {
+            body.push([
+              compra.folio,
+
+              new Date(compra.fecha).toLocaleString(),
+
+              compra.proveedor,
+
+              compra.usuario,
+
+              `${e.marca} ${e.modelo} ${e.color} ${e.capacidad}`,
+
+              e.numero_imei,
+
+              e.sucursal,
+
+              `$${Number(e.precio_compra).toFixed(2)}`,
+
+              `$${Number(compra.total).toFixed(2)}`,
+            ]);
+          });
+        }
+
+        doc.setFontSize(20);
+
+        doc.text("Historial Completo de Compras", 14, 15);
+
+        doc.autoTable({
+          startY: 25,
+
+          head: [
+            [
+              "Folio",
+              "Fecha/Hora",
+              "Proveedor",
+              "Usuario",
+              "Equipo",
+              "IMEI",
+              "Sucursal",
+              "P. Compra",
+              "Total Compra",
+            ],
+          ],
+
+          body,
+
+          styles: {
+            fontSize: 8,
+          },
+
+          headStyles: {
+            fillColor: [79, 70, 229],
+          },
+        });
+
+        doc.save("historial_completo_compras.pdf");
+      }
+      document.addEventListener("DOMContentLoaded", cargarCompras);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+</html>

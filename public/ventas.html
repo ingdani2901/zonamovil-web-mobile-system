@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Punto de Venta | ZON@MOVIL</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+      /* (Mantenemos tus estilos originales, están perfectos) */
+      :root {
+        --primary: #4a00e0;
+        --secondary: #8e2de2;
+        --accent: #2575fc;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --card-bg: rgba(255, 255, 255, 0.12);
+        --card-border: rgba(255, 255, 255, 0.2);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+      body {
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          var(--secondary),
+          var(--primary),
+          var(--accent)
+        );
+        background-size: 300% 300%;
+        animation: gradientMove 15s ease infinite;
+        color: white;
+        padding: 20px;
+      }
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .pos-container {
+        max-width: 1300px;
+        margin: auto;
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 18px;
+        align-items: start;
+      }
+      .carrito-card {
+        width: 100%;
+        max-width: 980px;
+      }
+      .cart-table th,
+      .cart-table td {
+        font-size: 15px;
+      }
+      .card {
+        background: var(--card-bg);
+        backdrop-filter: blur(15px);
+        border-radius: 24px;
+        border: 1px solid var(--card-border);
+        padding: 14px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        height: fit-content;
+      }
+      .header {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+        grid-column: span 2;
+      }
+      .header h1 {
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .btn {
+        padding: 8px 14px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+      .btn-back {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+      }
+      .btn-success {
+        background: linear-gradient(45deg, var(--success), #059669);
+        color: white;
+        width: 100%;
+        margin-top: 15px;
+      }
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ff6b6b;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        width: 100%;
+        margin-top: 10px;
+      }
+      .search-section {
+        margin-bottom: 10px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        opacity: 0.9;
+      }
+      .select2-container--default .select2-selection--single {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid var(--card-border) !important;
+        border-radius: 12px !important;
+        height: 38px !important;
+        display: flex;
+        align-items: center;
+      }
+      .select2-selection__rendered {
+        color: white !important;
+        padding-left: 15px !important;
+      }
+      .select2-dropdown {
+        background: #2d1b5e !important;
+        border: 1px solid var(--card-border) !important;
+        color: white !important;
+      }
+      .select2-results__option--highlighted {
+        background: var(--accent) !important;
+      }
+      .select2-search__field {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: white !important;
+        border-radius: 8px !important;
+      }
+      .cart-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      .cart-table th {
+        text-align: left;
+        padding: 8px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      }
+      .cart-table td {
+        padding: 7px 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .payment-summary {
+        margin-top: 10px;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 10px 12px;
+        border-radius: 15px;
+      }
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+      .total-price {
+        font-size: 22px;
+        font-weight: 600;
+        color: #fff;
+        text-align: center;
+        margin: 15px 0;
+        text-shadow: 0 0 15px rgba(37, 117, 252, 0.5);
+      }
+      .form-control {
+        width: 100%;
+        padding: 9px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        color: white;
+        outline: none;
+      }
+      select.form-control option {
+        background: #2d1b5e;
+      }
+      @media (max-width: 900px) {
+        .pos-container {
+          grid-template-columns: 1fr;
+        }
+        .header {
+          grid-column: span 1;
+        }
+      }
+
+      .ventas-grid {
+        align-items: start;
+      }
+      .carrito-card {
+        padding: 14px;
+        max-height: 260px;
+        overflow-y: auto;
+      }
+      #listaCarrito {
+        max-height: 120px;
+        overflow-y: auto;
+      }
+      .btn-header-back {
+        position: absolute;
+        left: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="pos-container">
+      <div class="header">
+        <a href="dashboard.html" class="btn btn-back btn-header-back">
+          <i class="fas fa-arrow-left"></i> Volver al Menú
+        </a>
+
+        <h1>
+          <i class="fas fa-cash-register"></i>
+          Punto de Venta
+        </h1>
+      </div>
+
+      <div class="card carrito-card">
+        <div class="search-section">
+          <label
+            ><i class="fas fa-mobile-alt"></i> Buscar Equipo (Escribe marca o
+            modelo)</label
+          >
+          <select id="buscarEquipo" class="form-control">
+            <option></option>
+          </select>
+        </div>
+
+        <div style="overflow-x: auto">
+          <table class="cart-table">
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>Precio</th>
+                <th style="text-align: right">Acción</th>
+              </tr>
+            </thead>
+            <tbody id="listaCarrito"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom: 20px">
+          <i class="fas fa-credit-card"></i> Detalle de Venta
+        </h3>
+
+        <div class="search-section">
+          <label><i class="fas fa-user"></i> Cliente (Opcional)</label>
+          <select id="buscarCliente" class="form-control">
+            <option></option>
+          </select>
+        </div>
+
+        <div class="search-section">
+          <label>Tipo de Venta</label>
+          <select id="tipo_venta" class="form-control">
+            <option value="contado">Venta de Contado</option>
+            <option value="apartado">Apartado</option>
+          </select>
+        </div>
+        <div class="search-section">
+          <label>Método de Pago</label>
+
+          <select id="metodo_pago" class="form-control">
+            <option value="Efectivo">Efectivo</option>
+            <option value="Tarjeta Débito">Tarjeta Débito</option>
+            <option value="Tarjeta Crédito">Tarjeta Crédito</option>
+            <option value="Transferencia">Transferencia</option>
+          </select>
+        </div>
+
+        <div id="efectivoContainer" class="search-section">
+          <label id="labelEfectivo">Efectivo recibido</label>
+
+          <input
+            type="number"
+            id="efectivo_recibido"
+            class="form-control"
+            placeholder="0.00"
+            min="0"
+          />
+        </div>
+
+        <div class="payment-summary" id="cambioContainer" style="display: none">
+          <div class="summary-item">
+            <span>Cambio:</span>
+            <span id="cambioLabel">$0.00</span>
+          </div>
+        </div>
+
+        <div id="sectionAbono" style="display: none" class="search-section">
+          <label>Monto de Abono</label>
+          <input
+            type="number"
+            id="monto_abono"
+            class="form-control"
+            placeholder="0.00"
+            min="0"
+          />
+        </div>
+
+        <div class="payment-summary">
+          <div class="summary-item">
+            <span>Subtotal:</span>
+            <span id="subtotalLabel">$0.00</span>
+          </div>
+          <div class="total-price" id="totalLabel">$0.00</div>
+          <div
+            class="summary-item"
+            id="saldoContainer"
+            style="display: none; color: var(--warning)"
+          >
+            <span>Saldo Pendiente:</span>
+            <span id="saldoLabel">$0.00</span>
+          </div>
+        </div>
+
+        <button class="btn btn-success" onclick="procesarVenta()">
+          <i class="fas fa-check-circle"></i> FINALIZAR VENTA
+        </button>
+
+        <button class="btn btn-danger" onclick="vaciarCarrito()">
+          <i class="fas fa-trash"></i> Vaciar
+        </button>
+      </div>
+    </div>
+
+    <script>
+      let carrito = [];
+      const token = localStorage.getItem("token");
+
+      $(document).ready(function () {
+        // --- BUSCADOR DE EQUIPOS ---
+        $("#buscarEquipo").select2({
+          placeholder: "Escribe para buscar...",
+          allowClear: true, // CORRECCIÓN: Permite borrar selección
+          minimumInputLength: 1,
+          ajax: {
+            url: "/api/inventario/buscar", // Ruta corregida
+            headers: { Authorization: "Bearer " + token },
+            delay: 250,
+            data: function (params) {
+              return { q: params.term };
+            },
+            processResults: function (data) {
+              // CORRECCIÓN: Maneja el nuevo formato { results: [...] }
+              return { results: data.results };
+            },
+          },
+        });
+
+        // --- BUSCADOR DE CLIENTES ---
+        $("#buscarCliente").select2({
+          placeholder: "Público General (Opcional)",
+          allowClear: true, // CORRECCIÓN: Permite vender sin cliente
+          minimumInputLength: 1,
+          ajax: {
+            url: "/api/clientes/buscar",
+            headers: { Authorization: "Bearer " + token },
+            delay: 250,
+            data: function (params) {
+              return { q: params.term };
+            },
+            processResults: function (data) {
+              // CORRECCIÓN: Mapeo manual por si el backend no usa id/text
+              return {
+                results: data.map((item) => ({
+                  id: item.id_cliente,
+                  text: item.nombre + " (" + item.telefono + ")",
+                })),
+              };
+            },
+          },
+        });
+
+        $("#buscarEquipo").on("select2:select", function (e) {
+          const data = e.params.data;
+          // Ajustamos para que lea los campos que vienen del backend
+          agregarAlCarrito({
+            id: data.id,
+            nombre: data.text,
+            precio: data.precio_venta,
+          });
+          $(this).val(null).trigger("change");
+        });
+
+        $("#tipo_venta").on("change", function () {
+          if ($(this).val() === "apartado") {
+            $("#labelEfectivo").text("Efectivo recibido para abono");
+          } else {
+            $("#labelEfectivo").text("Efectivo recibido");
+          }
+          if ($(this).val() === "apartado") {
+            $("#sectionAbono").fadeIn();
+            $("#saldoContainer").fadeIn();
+          } else {
+            $("#sectionAbono").fadeOut();
+            $("#saldoContainer").fadeOut();
+            $("#monto_abono").val("");
+          }
+          actualizarCalculos();
+        });
+
+        $("#monto_abono").on("input", function () {
+          // CORRECCIÓN: Validación instantánea de negativos
+          if (this.value < 0) this.value = 0;
+          actualizarCalculos();
+        });
+        $("#efectivo_recibido").on("input", function () {
+          // ✅ NO NEGATIVOS
+          if (this.value < 0) {
+            this.value = 0;
+          }
+
+          actualizarCalculos();
+        });
+
+        $("#metodo_pago").on("change", function () {
+          if ($(this).val() === "Efectivo") {
+            $("#efectivoContainer").show();
+            $("#cambioContainer").show();
+          } else {
+            $("#efectivoContainer").hide();
+            $("#cambioContainer").hide();
+          }
+        });
+        $("#metodo_pago").trigger("change");
+      });
+
+      function agregarAlCarrito(equipo) {
+        const existe = carrito.find((item) => item.id === equipo.id);
+
+        if (existe) {
+          return Swal.fire(
+            "Atención",
+            "Ese equipo ya está agregado",
+            "warning",
+          );
+        }
+
+        carrito.push({
+          id: equipo.id,
+          nombre: equipo.nombre,
+          precio: parseFloat(equipo.precio),
+        });
+
+        renderCarrito();
+      }
+
+      function renderCarrito() {
+        const tbody = $("#listaCarrito");
+        tbody.empty();
+        if (carrito.length === 0) {
+          tbody.append(
+            '<tr><td colspan="3" style="text-align:center; opacity:0.5;">Carrito vacío</td></tr>',
+          );
+        }
+        carrito.forEach((item, index) => {
+          tbody.append(`
+                    <tr>
+                        <td>${item.nombre}</td>
+                        <td>$${item.precio.toFixed(2)}</td>
+                        <td style="text-align: right;">
+                            <button onclick="eliminarItem(${index})" style="background:none; border:none; color:var(--danger); cursor:pointer;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `);
+        });
+        actualizarCalculos();
+      }
+      function actualizarCalculos() {
+        let total = carrito.reduce((acc, item) => acc + item.precio, 0);
+
+        let abono = parseFloat($("#monto_abono").val()) || 0;
+
+        $("#subtotalLabel").text(`$${total.toFixed(2)}`);
+
+        $("#totalLabel").text(`$${total.toFixed(2)}`);
+
+        if ($("#tipo_venta").val() === "apartado") {
+          let saldo = total - abono;
+          if (saldo < 0) {
+            saldo = 0;
+          }
+
+          $("#saldoLabel").text(
+            saldo.toLocaleString("es-MX", {
+              style: "currency",
+              currency: "MXN",
+            }),
+          );
+        }
+
+        const metodo = $("#metodo_pago").val();
+
+        if (metodo === "Efectivo") {
+          const recibido = parseFloat($("#efectivo_recibido").val()) || 0;
+
+          let montoBase = total;
+
+          // ✅ Si es apartado el cambio se calcula con el abono como base, no con el total
+          if ($("#tipo_venta").val() === "apartado") {
+            montoBase = abono;
+          }
+
+          const cambio = recibido - montoBase;
+
+          $("#cambioLabel").text(`$${Math.max(cambio, 0).toFixed(2)}`);
+        }
+      }
+
+      function eliminarItem(index) {
+        carrito.splice(index, 1);
+        renderCarrito();
+      }
+
+      function vaciarCarrito() {
+        carrito = [];
+        renderCarrito();
+      }
+
+      async function procesarVenta() {
+        if (carrito.length === 0)
+          return Swal.fire("Error", "Selecciona un equipo", "error");
+
+        const id_cliente = $("#buscarCliente").val();
+        const tipo_venta = $("#tipo_venta").val();
+        const abono = parseFloat($("#monto_abono").val()) || 0;
+        const metodoPago = $("#metodo_pago").val();
+
+        const efectivoRecibido = parseFloat($("#efectivo_recibido").val()) || 0;
+        // ✅ VALIDAR NEGATIVOS
+        if (abono < 0) {
+          return Swal.fire(
+            "Atención",
+            "El abono no puede ser negativo",
+            "warning",
+          );
+        }
+
+        if (efectivoRecibido < 0) {
+          return Swal.fire(
+            "Atención",
+            "El efectivo recibido no puede ser negativo",
+            "warning",
+          );
+        }
+
+        // CORRECCIÓN: Validaciones de negocio
+        if (tipo_venta === "apartado") {
+          if (!id_cliente)
+            return Swal.fire(
+              "Atención",
+              "Los apartados requieren un cliente registrado",
+              "warning",
+            );
+          if (abono <= 0)
+            return Swal.fire(
+              "Atención",
+              "El abono debe ser mayor a 0",
+              "warning",
+            );
+          // ✅ VALIDAR EFECTIVO
+          if (metodoPago === "Efectivo" && efectivoRecibido < abono) {
+            return Swal.fire(
+              "Atención",
+              "El efectivo recibido no cubre el abono",
+              "warning",
+            );
+          }
+          const total = carrito.reduce((acc, item) => acc + item.precio, 0);
+
+          if (abono >= total)
+            return Swal.fire(
+              "Atención",
+              "El abono no puede ser igual o mayor al total. Use venta de contado.",
+              "warning",
+            );
+        }
+
+        const payload = {
+          equipos: carrito,
+          id_cliente: id_cliente || null,
+          tipo_venta: tipo_venta,
+          metodo_pago: $("#metodo_pago").val(),
+          abono: abono,
+          efectivo_recibido: efectivoRecibido,
+        };
+
+        try {
+          const res = await fetch("/api/ventas", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await res.json();
+          if (res.ok) {
+            Swal.fire("¡Éxito!", "Venta registrada", "success").then(() => {
+              window.open(`ticket.html?id=${data.id_venta}`, "_blank");
+              location.reload();
+            });
+          } else {
+            throw new Error(data.message || "Error al procesar");
+          }
+        } catch (error) {
+          Swal.fire("Error", error.message, "error");
+        }
+      }
+    </script>
+  </body>
+</html>

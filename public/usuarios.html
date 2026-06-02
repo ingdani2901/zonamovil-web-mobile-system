@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Usuarios | ZON@MOVIL</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <style>
+      :root {
+        --primary: #4a00e0;
+        --secondary: #8e2de2;
+        --accent: #2575fc;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --light: #f8fafc;
+        --dark: #1e293b;
+        --gray: #64748b;
+        --light-gray: #e2e8f0;
+        --card-bg: rgba(255, 255, 255, 0.15);
+        --card-border: rgba(255, 255, 255, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          var(--secondary),
+          var(--primary),
+          var(--accent)
+        );
+        background-size: 300% 300%;
+        animation: gradientMove 15s ease infinite;
+        color: white;
+        overflow-x: hidden;
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: auto;
+        padding: 30px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        border: none;
+        outline: none;
+      }
+
+      .btn i {
+        font-size: 14px;
+      }
+
+      .btn-back {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-back:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(-3px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, var(--accent), var(--primary));
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn-success {
+        background: linear-gradient(45deg, var(--success), #059669);
+        color: white;
+      }
+
+      .btn-danger {
+        background: linear-gradient(45deg, var(--danger), #dc2626);
+        color: white;
+      }
+
+      .card {
+        background: var(--card-bg);
+        backdrop-filter: blur(15px);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.5s ease;
+        border: 1px solid var(--card-border);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .search-container {
+        margin-bottom: 25px;
+        position: relative;
+      }
+
+      .search-container i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 12px 20px 12px 45px;
+        border-radius: 12px;
+        border: none;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s;
+        backdrop-filter: blur(5px);
+      }
+
+      .search-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+      }
+
+      .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+        border-radius: 12px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        text-align: left;
+        padding: 15px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(5px);
+      }
+
+      td {
+        padding: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .status i {
+        font-size: 10px;
+      }
+
+      .activo {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+
+      .inactivo {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.4);
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+      }
+
+      .action-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      .action-btn.edit {
+        color: var(--accent);
+      }
+
+      .action-btn.delete {
+        color: var(--danger);
+      }
+
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border-radius: 25px;
+        padding: 30px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow:
+          0 0 40px rgba(138, 43, 226, 0.3),
+          0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: modalShow 0.3s ease;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .modal-title {
+        font-size: 24px;
+        font-weight: 600;
+        background: linear-gradient(90deg, #c084fc, #60a5fa);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .close-modal {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .close-modal:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        transform: rotate(90deg) scale(1.1);
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: #8b5cf6;
+        box-shadow:
+          0 0 10px rgba(139, 92, 246, 0.6),
+          0 0 20px rgba(139, 92, 246, 0.3);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      @keyframes modalShow {
+        from {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--dark);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+        opacity: 0;
+        transition: all 0.3s;
+      }
+
+      .toast.show {
+        opacity: 1;
+        bottom: 50px;
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .modal-content {
+          width: 95%;
+          padding: 20px;
+        }
+      }
+
+      /* Estilos para DataTables personalizados */
+      .dataTables_wrapper .dataTables_paginate .paginate_button {
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+        margin: 0 5px !important;
+        padding: 5px 12px !important;
+      }
+
+      .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      }
+
+      .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.6) !important;
+      }
+
+      .dataTables_wrapper .dataTables_length,
+      .dataTables_wrapper .dataTables_filter,
+      .dataTables_wrapper .dataTables_info {
+        color: white !important;
+      }
+
+      .dataTables_wrapper .dataTables_filter input {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 12px !important;
+        padding: 5px 10px !important;
+      }
+
+      .dataTables_wrapper .dataTables_filter input:focus {
+        outline: none;
+        border-color: #8b5cf6 !important;
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.6) !important;
+      }
+
+      /* Estilos para select */
+      select {
+        appearance: none;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 12px 16px !important;
+        border-radius: 12px !important;
+      }
+
+      /* Opciones del select */
+      select option {
+        background: #1e1e2f;
+        color: white;
+      }
+
+      /* Rol badges */
+      .rol-badge {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .rol-admin {
+        background: rgba(139, 92, 246, 0.2);
+        color: #8b5cf6;
+      }
+
+      .rol-vendedor {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+      }
+
+      .rol-inventario {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+      }
+
+      /* User avatar */
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        color: rgba(255, 255, 255, 0.8);
+      }
+      /* 🔥 SELECT2 DARK MODE FIX */
+      .select2-container--default .select2-selection--single {
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 12px !important;
+        height: 45px !important;
+        display: flex;
+        align-items: center;
+        color: white !important;
+      }
+
+      .select2-selection__rendered {
+        color: white !important;
+        line-height: normal !important;
+      }
+
+      .select2-dropdown {
+        background: #1e1e2f !important;
+        color: white !important;
+        border-radius: 12px !important;
+      }
+
+      .select2-results__option {
+        background: transparent !important;
+        color: white !important;
+      }
+
+      .select2-results__option--highlighted {
+        background: #6366f1 !important;
+      }
+    </style>
+    <script type="speculationrules">
+      {
+        "prerender": [
+          {
+            "where": {
+              "and": [
+                { "href_matches": "/*" },
+                { "not": { "href_matches": "/logout" } },
+                { "not": { "selector_matches": "[rel~=nofollow]" } },
+                { "not": { "selector_matches": "[data-no-prerender]" } }
+              ]
+            },
+            "eagerness": "moderate"
+          }
+        ]
+      }
+    </script>
+  </head>
+
+  <body>
+    <!-- 🔐 AUTH -->
+    <script src="/utils/auth.js"></script>
+
+    <div class="container">
+      <div class="header">
+        <button
+          class="btn btn-back"
+          onclick="window.location = 'dashboard.html'"
+        >
+          <i class="fa fa-arrow-left"></i> Volver
+        </button>
+
+        <h1><i class="fas fa-users"></i> Usuarios</h1>
+
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="abrirModal()">
+            <i class="fa fa-plus"></i> Nuevo Usuario
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-responsive">
+          <table id="tablaUsuarios" class="display nowrap" style="width: 100%">
+            <thead>
+              <tr>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Sucursal</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para nuevo usuario -->
+    <div class="modal" id="modalUsuario">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <i class="fas fa-user-plus"></i>
+            <span id="modalTitulo">Nuevo Usuario</span>
+          </h2>
+          <button class="close-modal" onclick="cerrarModal()">&times;</button>
+        </div>
+
+        <form id="formUsuario">
+          <div class="form-group">
+            <label>Nombre *</label>
+            <input
+              type="text"
+              class="form-control"
+              id="nombre"
+              placeholder="Nombre completo"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Email *</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              placeholder="Correo electrónico"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label
+              >Contraseña
+              <span id="passwordRequired" style="color: #ef4444">*</span></label
+            >
+            <div style="position: relative">
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                placeholder="Contraseña"
+              />
+
+              <span
+                onclick="togglePassword()"
+                id="iconoPassword"
+                style="
+                  position: absolute;
+                  right: 10px;
+                  top: 50%;
+                  transform: translateY(-50%);
+                  cursor: pointer;
+                "
+              >
+                <i class="fa fa-eye"></i>
+              </span>
+            </div>
+            <small style="opacity: 0.7; display: block; margin-top: 5px"
+              >Dejar en blanco para no cambiar</small
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Rol *</label>
+            <select class="form-control" id="rol" required></select>
+          </div>
+
+          <div class="form-group">
+            <label>Sucursal *</label>
+            <select class="form-control" id="sucursal" required></select>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn" onclick="cerrarModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> Guardar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      let usuarios = [];
+      let dataTable = null;
+      const toast = document.getElementById("toast");
+      let editandoId = null;
+
+      // Verificar si es admin
+      document.addEventListener("DOMContentLoaded", function () {
+        const user = JSON.parse(localStorage.getItem("user"));
+        setTimeout(() => {
+          $("#rol").select2({
+            dropdownParent: $("#modalUsuario"),
+            width: "100%",
+          });
+
+          $("#sucursal").select2({
+            dropdownParent: $("#modalUsuario"),
+            width: "100%",
+          });
+        }, 500);
+        if (user.id_rol !== 1) {
+          window.location.href = "dashboard.html";
+        }
+
+        cargarUsuarios();
+        cargarRoles();
+        cargarSucursales();
+      });
+
+      function showToast(msg, type = "success") {
+        toast.textContent = msg;
+        toast.className = "toast show " + type;
+        setTimeout(() => (toast.className = "toast"), 3000);
+      }
+
+      async function cargarUsuarios() {
+        try {
+          const token = localStorage.getItem("token");
+          const res = await fetch("/api/usuarios", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+
+          if (!res.ok) throw new Error("Error al cargar usuarios");
+
+          const data = await res.json();
+          usuarios = data; // límite preventivo
+          renderizarTabla(usuarios);
+        } catch (error) {
+          console.error("Error cargando usuarios:", error);
+          showToast("Error al cargar usuarios", "error");
+        }
+      }
+
+      async function cargarRoles() {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("/api/roles", {
+          headers: { Authorization: "Bearer " + token },
+        });
+
+        const data = await res.json();
+
+        const select = document.getElementById("rol");
+        select.innerHTML = '<option value="">Seleccionar rol</option>';
+
+        data.forEach((r) => {
+          const option = document.createElement("option");
+          option.value = r.id_rol;
+          option.textContent = r.nombre;
+          select.appendChild(option);
+        });
+
+        return data; // 🔥 IMPORTANTE
+      }
+
+      async function cargarSucursales() {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("/api/sucursales", {
+          headers: { Authorization: "Bearer " + token },
+        });
+
+        const data = await res.json();
+
+        const select = document.getElementById("sucursal");
+        select.innerHTML = '<option value="">Seleccionar sucursal</option>';
+
+        data.forEach((s) => {
+          const option = document.createElement("option");
+          option.value = s.id_sucursal;
+          option.textContent = s.nombre;
+          select.appendChild(option);
+        });
+
+        return data; // 🔥 IMPORTANTE
+      }
+
+      function renderizarTabla(data) {
+        if (dataTable) {
+          dataTable.destroy();
+          $("#tablaUsuarios tbody").empty();
+        }
+
+        dataTable = $("#tablaUsuarios").DataTable({
+          data: data, // 🔥 directo
+          columns: [
+            {
+              data: "nombre",
+              render: function (data) {
+                return `
+                        <div style="display:flex; align-items:center;">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div>${data}</div>
+                        </div>
+                    `;
+              },
+            },
+            { data: "email" },
+            {
+              data: "rol",
+              render: function (data) {
+                return `<span class="rol-badge ${getRolClass(data)}">${data}</span>`;
+              },
+            },
+            { data: "sucursal", defaultContent: "N/A" },
+            {
+              data: "activo",
+              render: function (data) {
+                return `
+                        <span class="status ${data ? "activo" : "inactivo"}">
+                            <i class="fas fa-circle"></i> ${data ? "Activo" : "Inactivo"}
+                        </span>
+                    `;
+              },
+            },
+            {
+              data: "id_usuario",
+              render: function (id, type, row) {
+                return `
+        <div class="actions">
+            <button class="action-btn edit" data-id="${id}">
+                <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn delete" data-id="${id}">
+                <i class="fas fa-power-off"></i>
+            </button>
+        </div>
+    `;
+              },
+            },
+          ],
+          pageLength: 5,
+          lengthMenu: [5, 10, 25, 50],
+          deferRender: true,
+          processing: true,
+          order: [[0, "asc"]],
+          dom: '<"top"lf>rt<"bottom"ip>',
+          language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ usuarios",
+            info: "Mostrando _START_ a _END_ de _TOTAL_",
+            paginate: {
+              next: "Siguiente",
+              previous: "Anterior",
+            },
+          },
+        });
+        // 🔥 EVENTOS DE BOTONES (IMPORTANTE)
+        $("#tablaUsuarios tbody")
+          .off("click", ".edit")
+          .on("click", ".edit", function () {
+            const id = $(this).data("id");
+            editarUsuario(id);
+          });
+
+        $("#tablaUsuarios tbody")
+          .off("click", ".delete")
+          .on("click", ".delete", function () {
+            const id = $(this).data("id");
+            toggleUsuario(id);
+          });
+      }
+      function togglePassword() {
+        const input = document.getElementById("password");
+        const icon = document
+          .getElementById("iconoPassword")
+          .querySelector("i");
+
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        } else {
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+
+      function getRolClass(rol) {
+        switch (rol.toLowerCase()) {
+          case "administrador":
+            return "rol-admin";
+          case "vendedor":
+            return "rol-vendedor";
+          case "inventario":
+            return "rol-inventario";
+          default:
+            return "";
+        }
+      }
+
+      function abrirModal(modo = "nuevo") {
+        document.getElementById("modalUsuario").style.display = "flex";
+
+        if (modo === "nuevo") {
+          document.getElementById("modalTitulo").textContent = "Nuevo Usuario";
+          document.getElementById("passwordRequired").style.display = "inline";
+          editandoId = null;
+          document.getElementById("formUsuario").reset();
+        }
+      }
+
+      function cerrarModal() {
+        document.getElementById("modalUsuario").style.display = "none";
+        document.getElementById("formUsuario").reset();
+        editandoId = null;
+      }
+
+      async function editarUsuario(id) {
+        const usuario = usuarios.find((u) => u.id_usuario == id);
+        if (!usuario) return;
+
+        editandoId = id;
+        window.rolOriginal = usuario.id_rol;
+        window.sucursalOriginal = usuario.id_sucursal;
+
+        abrirModal("editar");
+
+        document.getElementById("modalTitulo").textContent = "Editar Usuario";
+        document.getElementById("passwordRequired").style.display = "none";
+
+        document.getElementById("nombre").value = usuario.nombre;
+        document.getElementById("email").value = usuario.email;
+        document.getElementById("password").value = "";
+
+        // 🔥 ESPERAR CARGA REAL (NO setTimeout)
+        await cargarRoles();
+        await cargarSucursales();
+
+        // 🔥 ASIGNAR VALORES CORRECTAMENTE
+        $("#rol").val(usuario.id_rol).trigger("change");
+        $("#sucursal").val(usuario.id_sucursal).trigger("change");
+      }
+
+      async function toggleUsuario(id) {
+        const usuario = usuarios.find((u) => u.id_usuario == id);
+        if (!usuario) return;
+
+        const confirmMessage = usuario.activo
+          ? "¿Estás seguro de desactivar este usuario?"
+          : "¿Estás seguro de activar este usuario?";
+
+        const { isConfirmed } = await Swal.fire({
+          title: confirmMessage,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, continuar",
+          cancelButtonText: "Cancelar",
+          background: "rgba(255, 255, 255, 0.95)",
+          backdrop: "rgba(0, 0, 0, 0.5)",
+        });
+
+        if (isConfirmed) {
+          try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`/api/usuarios/estado/${id}`, {
+              method: "PUT",
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            });
+
+            if (res.ok) {
+              showToast(
+                `Usuario ${usuario.activo ? "desactivado" : "activado"} correctamente`,
+                "success",
+              );
+              cargarUsuarios();
+            } else {
+              throw new Error("Error al cambiar estado");
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            showToast("Error al cambiar estado del usuario", "error");
+          }
+        }
+      }
+
+      document
+        .getElementById("formUsuario")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const nombre = document.getElementById("nombre").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value;
+          let id_rol = document.getElementById("rol").value;
+          let id_sucursal = document.getElementById("sucursal").value;
+
+          // 🔥 SOLUCIÓN REAL
+          if (!id_rol && editandoId) id_rol = window.rolOriginal;
+          if (!id_sucursal && editandoId) id_sucursal = window.sucursalOriginal;
+
+          // Validaciones
+          if (!nombre || !email) {
+            return showToast("Nombre y correo son obligatorios", "warning");
+          }
+
+          // 🔥 SOLO validar rol/sucursal si es NUEVO
+          if (!editandoId && (!id_rol || !id_sucursal)) {
+            return showToast("Todos los campos son obligatorios", "warning");
+          }
+
+          if (!editandoId && !password) {
+            return showToast(
+              "La contraseña es obligatoria para nuevos usuarios",
+              "warning",
+            );
+          }
+
+          try {
+            const token = localStorage.getItem("token");
+            const userData = {
+              nombre,
+              email,
+            };
+
+            // 🔥 SOLO enviar si existen
+            if (id_rol) userData.id_rol = id_rol;
+            if (id_sucursal) userData.id_sucursal = id_sucursal;
+
+            // Solo incluir password si se está editando y se proporcionó uno
+            if (password) {
+              userData.password = password;
+            }
+
+            const url = editandoId
+              ? `/api/usuarios/${editandoId}`
+              : "/api/usuarios";
+
+            const method = editandoId ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+              method,
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+              body: JSON.stringify(userData),
+            });
+
+            if (res.ok) {
+              showToast(
+                editandoId
+                  ? "Usuario actualizado correctamente"
+                  : "Usuario creado correctamente",
+                "success",
+              );
+              cerrarModal();
+              cargarUsuarios();
+            } else {
+              const data = await res.json();
+              throw new Error(data.message || "Error al guardar usuario");
+            }
+          } catch (error) {
+            console.error("Error al guardar usuario:", error);
+            showToast(error.message, "error");
+          }
+        });
+    </script>
+  </body>
+</html>

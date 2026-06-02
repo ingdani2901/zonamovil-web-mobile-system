@@ -1,0 +1,1381 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reparaciones | ZON@MOVIL</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <style>
+      :root {
+        --primary: #4a00e0;
+        --secondary: #8e2de2;
+        --accent: #2575fc;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --light: #f8fafc;
+        --dark: #1e293b;
+        --gray: #64748b;
+        --light-gray: #e2e8f0;
+        --card-bg: rgba(255, 255, 255, 0.15);
+        --card-border: rgba(255, 255, 255, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          var(--secondary),
+          var(--primary),
+          var(--accent)
+        );
+        background-size: 300% 300%;
+        animation: gradientMove 15s ease infinite;
+        color: white;
+        overflow-x: hidden;
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: auto;
+        padding: 30px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        border: none;
+        outline: none;
+      }
+
+      .btn i {
+        font-size: 14px;
+      }
+
+      .btn-back {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-back:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(-3px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, var(--accent), var(--primary));
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn-success {
+        background: linear-gradient(45deg, var(--success), #059669);
+        color: white;
+      }
+
+      .btn-danger {
+        background: linear-gradient(45deg, var(--danger), #dc2626);
+        color: white;
+      }
+
+      .card {
+        background: var(--card-bg);
+        backdrop-filter: blur(15px);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.5s ease;
+        border: 1px solid var(--card-border);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .search-container {
+        margin-bottom: 25px;
+        position: relative;
+      }
+
+      .search-container i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 12px 20px 12px 45px;
+        border-radius: 12px;
+        border: none;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s;
+        backdrop-filter: blur(5px);
+      }
+
+      .search-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+      }
+
+      .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+        border-radius: 12px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+      }
+
+      th {
+        text-align: left;
+        padding: 15px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(5px);
+      }
+
+      td {
+        padding: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .status {
+        padding: 7px 16px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .status i {
+        font-size: 10px;
+      }
+
+      /* RECIBIDO */
+      .recibido {
+        background: rgba(59, 130, 246, 0.18);
+        color: #60a5fa;
+        border: 1px solid rgba(96, 165, 250, 0.35);
+      }
+
+      /* EN PROCESO */
+      .en_proceso {
+        background: rgba(245, 158, 11, 0.18);
+        color: #f59e0b;
+        border: 1px solid rgba(245, 158, 11, 0.35);
+      }
+
+      /* LISTO */
+      .listo {
+        background: rgba(16, 185, 129, 0.18);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.35);
+      }
+
+      /* ENTREGADO */
+      .entregado {
+        background: rgba(139, 92, 246, 0.18);
+        color: #c084fc;
+        border: 1px solid rgba(192, 132, 252, 0.35);
+      }
+
+      /* CANCELADO */
+      .cancelado {
+        background: rgba(239, 68, 68, 0.18);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.35);
+      }
+
+      /* NO RECOGIDO */
+      .no_recogido {
+        background: rgba(244, 114, 182, 0.18);
+        color: #f472b6;
+        border: 1px solid rgba(244, 114, 182, 0.35);
+      }
+
+      /* IRREPARABLE */
+      .irreparable {
+        background: rgba(107, 114, 128, 0.18);
+        color: #9ca3af;
+        border: 1px solid rgba(156, 163, 175, 0.35);
+      }
+
+      /* DESTRUCCIÓN */
+      .destruccion {
+        background: rgba(251, 146, 60, 0.18);
+        color: #fb923c;
+        border: 1px solid rgba(251, 146, 60, 0.35);
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+      }
+
+      .action-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      .action-btn.edit {
+        color: var(--accent);
+      }
+
+      .action-btn.delete {
+        color: var(--danger);
+      }
+
+      .action-btn.complete {
+        color: var(--success);
+      }
+
+      .fab {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, var(--success), #059669);
+        border: none;
+        color: white;
+        font-size: 22px;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+      }
+
+      .fab:hover {
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      }
+
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+      }
+
+      #confirmModal {
+        z-index: 2000;
+      }
+
+      .modal-content {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border-radius: 25px;
+        padding: 30px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow:
+          0 0 40px rgba(138, 43, 226, 0.3),
+          0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: modalShow 0.3s ease;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .modal-title {
+        font-size: 24px;
+        font-weight: 600;
+        background: linear-gradient(90deg, #c084fc, #60a5fa);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .close-modal {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .close-modal:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        transform: rotate(90deg) scale(1.1);
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: #8b5cf6;
+        box-shadow:
+          0 0 10px rgba(139, 92, 246, 0.6),
+          0 0 20px rgba(139, 92, 246, 0.3);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      textarea.form-control {
+        min-height: 120px;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      .modal-footer .btn {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        border-radius: 12px;
+        padding: 12px 22px;
+        box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+        transition: 0.3s;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 15px 35px rgba(139, 92, 246, 0.6);
+      }
+
+      @keyframes modalShow {
+        from {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--dark);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+        opacity: 0;
+        transition: all 0.3s;
+      }
+
+      .toast.show {
+        opacity: 1;
+        bottom: 50px;
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .modal-content {
+          width: 90%;
+          padding: 20px;
+        }
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .estado-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .estado-btn {
+        padding: 10px 16px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.08);
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .estado-btn:hover {
+        background: rgba(139, 92, 246, 0.3);
+      }
+
+      .estado-btn.active {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+      }
+
+      .eliminado {
+        background: rgba(239, 68, 68, 0.2) !important;
+        border-left: 4px solid #ef4444;
+      }
+
+      .filtro-btn {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border-radius: 12px;
+        padding: 10px 18px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .filtro-btn.active {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);
+        transform: scale(1.05);
+      }
+      /* 🔥 SELECT DE DATATABLE (MOSTRAR) */
+      .dataTables_length select {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        padding: 5px 10px;
+        backdrop-filter: blur(10px);
+      }
+
+      /*  OPCIONES DEL SELECT */
+      .dataTables_length select option {
+        background: #1e1e2f; /* oscuro */
+        color: white;
+      }
+
+      /*  TEXTO "MOSTRAR" */
+      .dataTables_length label {
+        color: white;
+        font-weight: 500;
+      }
+
+      /*  INPUT BUSCAR */
+      .dataTables_filter input {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border-radius: 8px;
+        border: none;
+        padding: 5px 10px;
+      }
+
+      /*  TEXTO BUSCAR */
+      .dataTables_filter label {
+        color: white;
+      }
+
+      /*  PAGINACIÓN */
+      .dataTables_paginate .paginate_button {
+        color: white !important;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="utils/auth.js"></script>
+    <div class="container">
+      <div class="header">
+        <button
+          class="btn btn-back"
+          onclick="window.location = 'dashboard.html'"
+        >
+          <i class="fa fa-arrow-left"></i> Volver
+        </button>
+
+        <h1><i class="fas fa-tools"></i> Reparaciones</h1>
+
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="abrirModal()">
+            <i class="fa fa-plus"></i> Nueva Reparación
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 15px">
+        <button
+          class="filtro-btn active"
+          onclick="cambiarFiltro(this, 'activas')"
+        >
+          Activas
+        </button>
+        <button class="filtro-btn" onclick="cambiarFiltro(this, 'eliminadas')">
+          Eliminadas
+        </button>
+        <button class="filtro-btn" onclick="cambiarFiltro(this, 'todas')">
+          Todas
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="table-responsive">
+          <table id="tablaData">
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Color</th>
+                <th>Problema</th>
+                <th>Costo</th>
+                <th>Estado</th>
+                <th>Fecha Ingreso</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaReparaciones">
+              <!-- Datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal para nueva reparación -->
+    <div class="modal" id="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <i class="fas fa-tools"></i> Nueva Reparación
+          </h2>
+          <button class="close-modal" onclick="cerrarModal()">&times;</button>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cliente</label>
+            <input
+              type="text"
+              class="form-control"
+              id="cliente"
+              placeholder="Nombre del cliente"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input
+              type="text"
+              class="form-control"
+              id="telefono"
+              placeholder="Número"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Marca</label>
+            <input
+              type="text"
+              class="form-control"
+              id="marca"
+              placeholder="Samsung, Apple..."
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Modelo</label>
+            <input
+              type="text"
+              class="form-control"
+              id="modelo"
+              placeholder="Modelo"
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Color</label>
+          <input
+            type="text"
+            class="form-control"
+            id="color"
+            placeholder="Negro, Azul, etc."
+          />
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="garantia" />
+            ¿Es garantía?
+          </label>
+        </div>
+
+        <div id="imeiContainer" style="display: none">
+          <div class="form-row">
+            <div class="form-group">
+              <label>IMEI 1</label>
+              <input type="text" id="imei1" onblur="verificarGarantia()" />
+            </div>
+
+            <div class="form-group">
+              <label>IMEI 2</label>
+              <input type="text" class="form-control" id="imei2" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Observaciones</label>
+          <textarea
+            class="form-control"
+            id="problema"
+            placeholder="Describe el problema..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Costo estimado</label>
+          <input
+            type="number"
+            class="form-control"
+            id="costo"
+            placeholder="Ej: 500"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Estado</label>
+          <div class="estado-group">
+            <button
+              type="button"
+              class="estado-btn active"
+              data-value="recibido"
+            >
+              Recibido
+            </button>
+            <button type="button" class="estado-btn" data-value="en_proceso">
+              En proceso
+            </button>
+            <button type="button" class="estado-btn" data-value="listo">
+              Listo
+            </button>
+            <button type="button" class="estado-btn" data-value="no_recogido">
+              No recogido
+            </button>
+            <button type="button" class="estado-btn" data-value="entregado">
+              Entregado
+            </button>
+            <button type="button" class="estado-btn" data-value="destruccion">
+              Destrucción
+            </button>
+            <button type="button" class="estado-btn" data-value="cancelado">
+              Cancelado
+            </button>
+            <button type="button" class="estado-btn" data-value="irreparable">
+              Irreparable
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn" onclick="cerrarModal()">Cancelar</button>
+          <button class="btn btn-primary" onclick="guardarReparacion()">
+            Guardar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- MODAL CONFIRM -->
+    <div id="confirmModal" class="modal">
+      <div class="modal-content">
+        <h3 id="confirmText">¿Seguro?</h3>
+        <div
+          style="
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+          "
+        >
+          <button class="btn" onclick="cerrarConfirm()">Cancelar</button>
+          <button class="btn btn-danger" id="confirmBtn">Aceptar</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      let estadoSeleccionado = "recibido";
+      let editandoId = null;
+      let reparaciones = [];
+      let filtroEstado = "activas";
+
+      const tablaReparaciones = document.getElementById("tablaReparaciones");
+      const toast = document.getElementById("toast");
+
+      // Función para limpiar el formulario
+      function limpiarFormulario() {
+        document.getElementById("cliente").value = "";
+        document.getElementById("telefono").value = "";
+        document.getElementById("marca").value = "";
+        document.getElementById("modelo").value = "";
+        document.getElementById("color").value = "";
+        document.getElementById("problema").value = "";
+        document.getElementById("costo").value = "";
+        document.getElementById("garantia").checked = false;
+        document.getElementById("imei1").value = "";
+        document.getElementById("imei2").value = "";
+        document.getElementById("imeiContainer").style.display = "none";
+
+        // Restablecer el estado
+        estadoSeleccionado = "recibido";
+        document.querySelectorAll(".estado-btn").forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.dataset.value === estadoSeleccionado) {
+            btn.classList.add("active");
+          }
+        });
+      }
+
+      function cambiarFiltro(btn, filtro) {
+        filtroEstado = filtro;
+        document
+          .querySelectorAll(".filtro-btn")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderizarTabla(reparaciones);
+      }
+
+      function mostrarConfirm(mensaje, callback) {
+        document.getElementById("confirmText").innerText = mensaje;
+        document.getElementById("confirmBtn").onclick = () => {
+          callback();
+          cerrarConfirm();
+        };
+        document.getElementById("confirmModal").style.display = "flex";
+      }
+
+      function cerrarConfirm() {
+        document.getElementById("confirmModal").style.display = "none";
+      }
+
+      function abrirModal() {
+        limpiarFormulario();
+        document.getElementById("modal").style.display = "flex";
+      }
+
+      function cerrarModal() {
+        limpiarFormulario();
+        document.getElementById("modal").style.display = "none";
+        editandoId = null;
+      }
+
+      function showToast(msg, type = "success") {
+        toast.textContent = msg;
+        toast.className = "toast show " + type;
+        setTimeout(() => (toast.className = "toast"), 3000);
+      }
+
+      async function cargarReparaciones() {
+        try {
+          const token = localStorage.getItem("token");
+          const res = await fetch("http://localhost:3000/api/reparaciones", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+          const data = await res.json();
+          if (!Array.isArray(data)) {
+            console.error("Respuesta inválida:", data);
+            showToast(data.error || "Error cargando reparaciones", "error");
+            return;
+          }
+          reparaciones = data;
+          renderizarTabla(data);
+        } catch (error) {
+          console.error(error);
+          showToast("Error cargando reparaciones", "error");
+        }
+      }
+
+      function renderizarTabla(data) {
+        let filtrados = data;
+
+        // 🔹 FILTROS
+        if (filtroEstado === "activas") {
+          filtrados = data.filter((r) => !r.eliminado);
+        }
+
+        if (filtroEstado === "eliminadas") {
+          filtrados = data.filter((r) => r.eliminado);
+        }
+
+        if (filtroEstado === "todas") {
+          filtrados = data;
+        }
+
+        // 🔹 DESTRUIR DATATABLE SI EXISTE
+        if ($.fn.DataTable.isDataTable("#tablaData")) {
+          $("#tablaData").DataTable().clear().destroy();
+        }
+
+        // 🔹 LIMPIAR TABLA
+        tablaReparaciones.innerHTML = "";
+
+        // 🔹 SI NO HAY DATOS
+        if (filtrados.length === 0) {
+          tablaReparaciones.innerHTML = "";
+
+          $("#tablaData").DataTable({
+            data: [],
+            destroy: true,
+            pageLength: 5,
+            language: {
+              emptyTable: "No hay reparaciones registradas",
+              search: "Buscar:",
+              lengthMenu: "Mostrar _MENU_",
+              info: "Mostrando _START_ a _END_ de _TOTAL_",
+              paginate: {
+                next: "Siguiente",
+                previous: "Anterior",
+              },
+            },
+          });
+
+          return;
+        } else {
+          // 🔹 LLENAR TABLA
+          filtrados.forEach((r) => {
+            const row = document.createElement("tr");
+
+            if (r.eliminado) {
+              row.classList.add("eliminado");
+            }
+            row.innerHTML = `
+    <td>${r.cliente || "Sin cliente"}</td>
+    <td>${r.marca || "N/A"}</td>
+    <td>${r.modelo || "N/A"}</td>
+    <td>${r.color || "N/A"}</td>
+
+    <td>${
+      r.observaciones
+        ? r.observaciones.length > 30
+          ? r.observaciones.substring(0, 30) + "..."
+          : r.observaciones
+        : "No especificado"
+    }
+    </td>
+
+    <td>$${r.costo_estimado ? Number(r.costo_estimado).toFixed(2) : "0.00"}</td>
+
+    <td>
+        <span class="status ${r.estado || "pendiente"}">
+            <i class="fas fa-circle"></i> 
+            ${(r.estado || "pendiente")
+              .replaceAll("_", " ")
+              .replace(/\b\w/g, (l) => l.toUpperCase())}
+        </span>
+    </td>
+
+    <td>${r.fecha_ingreso ? new Date(r.fecha_ingreso).toLocaleDateString() : "N/A"}</td>
+
+    <td>
+        <div class="actions">
+            ${
+              !r.eliminado
+                ? `
+                <button class="action-btn edit" onclick="editarReparacion(${r.id_nota})">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn delete" onclick="eliminarReparacion(${r.id_nota})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `
+                : `
+                <button class="action-btn complete" onclick="restaurarReparacion(${r.id_nota})">
+                    <i class="fas fa-undo"></i>
+                </button>
+            `
+            }
+        </div>
+    </td>
+`;
+
+            tablaReparaciones.appendChild(row);
+          });
+        }
+
+        // INICIALIZAR DATATABLE (AL FINAL)
+        $("#tablaData").DataTable({
+          pageLength: 5,
+          destroy: true,
+          language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_",
+            info: "Mostrando _START_ a _END_ de _TOTAL_",
+            paginate: {
+              next: "Siguiente",
+              previous: "Anterior",
+            },
+          },
+        });
+      }
+
+      async function guardarReparacion() {
+        const cliente = document.getElementById("cliente").value.trim();
+        const telefono = document.getElementById("telefono").value.trim();
+        const marca = document.getElementById("marca").value.trim();
+        const modelo = document.getElementById("modelo").value.trim();
+        const observaciones = document.getElementById("problema").value.trim();
+        const color = document.getElementById("color").value.trim();
+        const costo = parseFloat(document.getElementById("costo").value) || 0;
+
+        if (!cliente || cliente.length < 3) {
+          return showToast("Nombre de cliente inválido", "warning");
+        }
+
+        if (!telefono || !/^[0-9]{10}$/.test(telefono)) {
+          return showToast("Teléfono inválido (10 dígitos)", "warning");
+        }
+
+        if (!marca || marca.length < 2) {
+          return showToast("Marca inválida", "warning");
+        }
+
+        if (!modelo || modelo.length < 2) {
+          return showToast("Modelo inválido", "warning");
+        }
+
+        if (!observaciones || observaciones.length < 5) {
+          return showToast("Describe mejor el problema", "warning");
+        }
+
+        try {
+          const token = localStorage.getItem("token");
+          const url = editandoId
+            ? `http://localhost:3000/api/reparaciones/${editandoId}`
+            : "http://localhost:3000/api/reparaciones";
+
+          const method = editandoId ? "PUT" : "POST";
+
+          const res = await fetch(url, {
+            method,
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+              cliente,
+              telefono,
+              marca,
+              modelo,
+              color,
+              observaciones,
+              estado: estadoSeleccionado,
+              costo,
+            }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            console.error("🔥 ERROR BACKEND COMPLETO:", data);
+            throw new Error(JSON.stringify(data));
+          }
+
+          cerrarModal();
+          showToast(
+            editandoId
+              ? "Reparación actualizada correctamente"
+              : "Reparación creada correctamente",
+            "success",
+          );
+          cargarReparaciones();
+        } catch (error) {
+          console.error("🔥 ERROR FRONT:", error);
+          showToast(error.message, "error");
+        }
+      }
+
+      async function eliminarReparacion(id) {
+        Swal.fire({
+          title: "¿Estás seguro?",
+          text: "¡Esta reparación será marcada como eliminada!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Sí, eliminar",
+          cancelButtonText: "Cancelar",
+          background: "rgba(255, 255, 255, 0.95)",
+          backdrop: "rgba(0, 0, 0, 0.5)",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              const token = localStorage.getItem("token");
+
+              const response = await fetch(
+                `http://localhost:3000/api/reparaciones/${id}`,
+                {
+                  method: "DELETE",
+                  headers: {
+                    Authorization: "Bearer " + token,
+                  },
+                },
+              );
+
+              if (response.ok) {
+                showToast("Reparación eliminada correctamente", "success");
+                cargarReparaciones();
+              } else {
+                const data = await response.json();
+                showToast(data.message || "Error al eliminar", "error");
+              }
+            } catch (error) {
+              console.error("Error:", error);
+              showToast("Error de conexión", "error");
+            }
+          }
+        });
+      }
+
+      async function restaurarReparacion(id) {
+        try {
+          const token = localStorage.getItem("token");
+
+          const response = await fetch(
+            `http://localhost:3000/api/reparaciones/restaurar/${id}`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            },
+          );
+
+          if (response.ok) {
+            showToast("Reparación restaurada correctamente", "success");
+            cargarReparaciones();
+          } else {
+            const data = await response.json();
+            showToast(data.message || "Error al restaurar", "error");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          showToast("Error de conexión", "error");
+        }
+      }
+
+      function editarReparacion(id) {
+        const r = reparaciones.find((x) => x.id_nota == id);
+        if (!r) return;
+
+        limpiarFormulario();
+        editandoId = id;
+
+        abrirModal();
+
+        document.getElementById("cliente").value = r.cliente || "";
+        document.getElementById("telefono").value = r.telefono || "";
+        document.getElementById("marca").value = r.marca || "";
+        document.getElementById("modelo").value = r.modelo || "";
+        document.getElementById("color").value = r.color || "";
+        document.getElementById("problema").value = r.observaciones || "";
+        document.getElementById("costo").value = r.costo_estimado || "";
+
+        // Estado correcto
+        estadoSeleccionado = r.estado || "recibido";
+
+        // Pintar botones
+        document.querySelectorAll(".estado-btn").forEach((btn) => {
+          btn.classList.remove("active");
+
+          if (btn.dataset.value === estadoSeleccionado) {
+            btn.classList.add("active");
+          }
+        });
+      }
+
+      // Event listeners
+      document.querySelectorAll(".estado-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          document
+            .querySelectorAll(".estado-btn")
+            .forEach((b) => b.classList.remove("active"));
+          this.classList.add("active");
+          estadoSeleccionado = this.dataset.value;
+        });
+      });
+
+      document
+        .getElementById("garantia")
+        .addEventListener("change", function () {
+          document.getElementById("imeiContainer").style.display = this.checked
+            ? "block"
+            : "none";
+        });
+
+      // Inicialización
+      document.addEventListener("DOMContentLoaded", function () {
+        cargarReparaciones();
+      });
+      async function verificarGarantia() {
+        const imei = document.getElementById("imei1").value;
+
+        if (!imei || imei.length < 10) return;
+
+        try {
+          const token = localStorage.getItem("token");
+
+          const response = await fetch(
+            `/api/reparaciones/verificar-imei/${imei}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            },
+          );
+
+          const data = await response.json();
+
+          if (data.garantia) {
+            document.getElementById("marca").value = data.marca;
+
+            document.getElementById("modelo").value = data.modelo;
+
+            document.getElementById("color").value = data.color;
+
+            document.getElementById("costo").value = 0;
+
+            Swal.fire({
+              icon: "success",
+              title: "Garantía válida",
+              text: "El equipo tiene garantía activa.",
+            });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    </script>
+  </body>
+</html>

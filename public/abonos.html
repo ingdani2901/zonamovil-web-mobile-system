@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Abonos</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+/>
+
+    <style>
+      :root {
+        --primary: #4a00e0;
+        --secondary: #8e2de2;
+        --accent: #2575fc;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          var(--secondary),
+          var(--primary),
+          var(--accent)
+        );
+        background-size: 300% 300%;
+        animation: gradientMove 15s ease infinite;
+        color: white;
+        padding: 30px;
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container {
+        max-width: 1500px;
+        margin: auto;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .header h1 {
+        font-size: 52px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+
+      .btn-back {
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        padding: 14px 22px;
+        border-radius: 16px;
+        cursor: pointer;
+        font-size: 18px;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+        transition: 0.3s;
+      }
+
+      .btn-back:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(-3px);
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        border-radius: 28px;
+        padding: 24px;
+      }
+
+      table.dataTable {
+        color: white !important;
+      }
+
+      table.dataTable thead th {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-bottom: none !important;
+        font-size: 18px;
+      }
+
+      table.dataTable tbody td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+        font-size: 17px;
+      }
+
+      table.dataTable tbody tr {
+        background: transparent !important;
+      }
+
+      table.dataTable tbody tr:hover {
+        background: rgba(255, 255, 255, 0.05) !important;
+      }
+
+      /* ESTADOS */
+      .estado {
+        padding: 8px 18px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .pagado {
+        background: rgba(16, 185, 129, 0.18);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.35);
+      }
+
+      .pendiente {
+        background: rgba(245, 158, 11, 0.18);
+        color: #f59e0b;
+        border: 1px solid rgba(245, 158, 11, 0.35);
+      }
+
+      .vencido {
+        background: rgba(239, 68, 68, 0.18);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.35);
+      }
+
+      /* BOTÓN */
+      .btn-abonar {
+        border: none;
+        padding: 10px 18px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      .btn-abonar:hover {
+        transform: translateY(-2px);
+      }
+
+      /* 🔥 DATATABLE PREMIUM */
+
+      .dataTables_wrapper {
+        margin-top: 10px;
+      }
+
+      .dataTables_length,
+      .dataTables_filter {
+        margin-bottom: 20px;
+      }
+
+      .dataTables_length label,
+      .dataTables_filter label,
+      .dataTables_info,
+      .dataTables_paginate {
+        color: white !important;
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      /* SELECT + SEARCH */
+      .dataTables_filter input,
+      .dataTables_length select {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 8px 14px !important;
+        outline: none !important;
+        transition: 0.3s;
+      }
+
+      /* FOCUS */
+      .dataTables_filter input:focus,
+      .dataTables_length select:focus {
+        border-color: rgba(255, 255, 255, 0.4) !important;
+        background: rgba(255, 255, 255, 0.18) !important;
+        box-shadow: none !important;
+      }
+
+      /* OPTIONS */
+      .dataTables_length select option {
+        background: #1e1e2f;
+        color: white;
+      }
+
+      /* SEARCH */
+      .dataTables_filter input {
+        width: 240px !important;
+      }
+
+      /* PAGINACIÓN */
+      .dataTables_paginate {
+        margin-top: 15px !important;
+      }
+
+      .dataTables_paginate .paginate_button {
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        transition: 0.3s;
+      }
+
+      .dataTables_paginate .paginate_button:hover {
+        background: rgba(255, 255, 255, 0.12) !important;
+        color: white !important;
+      }
+
+      .dataTables_paginate .paginate_button.current {
+        background: rgba(255, 255, 255, 0.18) !important;
+        color: white !important;
+      }
+
+      /* TABLA */
+      table.dataTable.no-footer {
+        border-bottom: none !important;
+      }
+
+      table.dataTable thead th {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+      }
+
+      table.dataTable tbody td {
+        vertical-align: middle;
+      }
+
+      /* SCROLL */
+      .table-responsive {
+        overflow-x: auto;
+      }
+      /* =====================================
+ACCIONES
+===================================== */
+
+      .acciones-abonos {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      /* =====================================
+BOTÓN HISTORIAL
+===================================== */
+
+      .btn-historial {
+        border: none;
+        padding: 10px 18px;
+        border-radius: 14px;
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.3s;
+      }
+
+      .btn-historial:hover {
+        transform: translateY(-2px);
+      }
+
+      /* =====================================
+LIQUIDADO
+===================================== */
+
+      .liquidado-text {
+        color: #10b981;
+        font-weight: 700;
+      }
+
+/* =====================================
+MODAL PREMIUM
+===================================== */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  display: none;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  backdrop-filter: blur(10px);
+
+  z-index: 9999;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.08);
+
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+
+  border-radius: 28px;
+
+  padding: 30px;
+
+  width: 90%;
+  max-width: 650px;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  box-shadow:
+    0 0 40px rgba(138, 43, 226, 0.25),
+    0 20px 60px rgba(0, 0, 0, 0.5);
+
+  animation: modalShow 0.3s ease;
+}
+
+.modal-abono {
+  max-width: 560px;
+}
+
+@keyframes modalShow {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =====================================
+HEADER
+===================================== */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 28px;
+}
+
+.modal-title {
+  font-size: 28px;
+  font-weight: 700;
+
+  background: linear-gradient(90deg, #c084fc, #60a5fa);
+
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* =====================================
+BOTÓN X
+===================================== */
+
+.close-modal {
+  background: rgba(255, 255, 255, 0.1);
+
+  border: none;
+
+  width: 42px;
+  height: 42px;
+
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: white;
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+  background: rgba(239, 68, 68, 0.18);
+
+  color: #ef4444;
+
+  transform: rotate(90deg) scale(1.08);
+
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.5);
+}
+
+/* =====================================
+FORMULARIO
+===================================== */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  margin-bottom: 10px;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  height: 60px;
+
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  color: white;
+
+  padding: 0 18px;
+
+  font-size: 16px;
+
+  transition: all 0.3s ease;
+}
+
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+
+  border-color: #8b5cf6;
+
+  box-shadow:
+    0 0 12px rgba(139, 92, 246, 0.6),
+    0 0 24px rgba(139, 92, 246, 0.25);
+
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.form-group select option {
+  background: #1e1e2f;
+  color: white;
+}
+
+/* =====================================
+SALDO
+===================================== */
+
+.saldo-info {
+  background: rgba(255, 255, 255, 0.08);
+
+  border-radius: 20px;
+
+  padding: 20px;
+
+  margin-bottom: 25px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 18px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.saldo-info strong {
+  color: #f59e0b;
+
+  font-size: 32px;
+}
+
+/* =====================================
+BOTONES
+===================================== */
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+
+  gap: 14px;
+
+  margin-top: 30px;
+}
+
+.btn-cancelar {
+  border: none;
+
+  background: #e5e7eb;
+
+  color: #111827;
+
+  padding: 14px 24px;
+
+  border-radius: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.btn-cancelar:hover {
+  transform: translateY(-2px);
+}
+
+.btn-guardar {
+  border: none;
+
+  background: linear-gradient(135deg, #4f46e5, #6d28d9);
+
+  color: white;
+
+  padding: 14px 24px;
+
+  border-radius: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.btn-guardar:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 10px 25px rgba(109, 40, 217, 0.45);
+}
+/* =====================================
+TABLA HISTORIAL PREMIUM
+===================================== */
+
+.historial-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tablaHistorial {
+  width: 100%;
+  min-width: 700px;
+
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.tablaHistorial thead {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.tablaHistorial thead th {
+  padding: 18px;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+.tablaHistorial tbody tr {
+  transition: 0.3s;
+}
+
+.tablaHistorial tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tablaHistorial tbody td {
+  padding: 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.tablaHistorial tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* FECHA */
+.fecha-abono {
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* MONTO */
+.monto-abono {
+  color: #10b981;
+  font-weight: 700;
+}
+
+/* SALDO */
+.saldo-restante {
+  color: #f59e0b;
+  font-weight: 700;
+}
+
+/* MÉTODO */
+.metodo-pill {
+  display: inline-block;
+
+  padding: 8px 14px;
+
+  border-radius: 999px;
+
+  background: rgba(139, 92, 246, 0.18);
+
+  border: 1px solid rgba(139, 92, 246, 0.35);
+
+  color: #c084fc;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* USUARIO */
+.usuario-abono {
+  font-weight: 600;
+}
+    </style>
+  </head>
+
+  <body>
+    <script src="utils/auth.js"></script>
+    <div class="container">
+      <div class="header">
+
+        <button class="btn-back" onclick="window.location = 'dashboard.html'">
+          ← Volver
+        </button>
+
+        <h1>
+  <i class="fa-solid fa-sack-dollar"></i>
+  Abonos
+</h1>
+
+        <div></div>
+      </div>
+
+      <div class="card">
+        <div class="table-responsive">
+          <table id="tablaAbonos">
+            <thead>
+              <tr>
+                <th>Folio</th>
+                <th>Cliente</th>
+                <th>Total</th>
+                <th>Abonado</th>
+                <th>Saldo</th>
+                <th>Fecha límite</th>
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+
+            <tbody></tbody>
+          </table>
+        </div>
+         </div>
+
+        <!-- =====================================
+MODAL HISTORIAL
+===================================== -->
+
+        <div class="modal" id="modalHistorial">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 class="modal-title">💰 Historial de Abonos</h2>
+
+              <button class="close-modal" onclick="cerrarHistorial()">
+                &times;
+              </button>
+            </div>
+
+            <div id="contenidoHistorial"></div>
+          </div>
+        </div>
+
+        <!-- =====================================
+MODAL ABONAR
+===================================== -->
+
+        <div class="modal" id="modalAbono">
+          <div class="modal-content modal-abono">
+            <div class="modal-header">
+              <h2 class="modal-title">💸 Registrar Abono</h2>
+
+              <button class="close-modal" onclick="cerrarModalAbono()">
+                &times;
+              </button>
+            </div>
+
+            <div class="form-group">
+              <label>Monto</label>
+
+              <input
+                type="number"
+                id="abonoMonto"
+                placeholder="Ingrese el monto"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Método de pago</label>
+
+<select id="abonoMetodo">
+  <option>Efectivo</option>
+
+  <option>Transferencia</option>
+
+  <option>Tarjeta de Débito</option>
+
+  <option>Tarjeta de Crédito</option>
+</select>
+            </div>
+
+            <div class="saldo-info">
+              <span>Saldo pendiente:</span>
+
+              <strong id="saldoActual"> $0 </strong>
+            </div>
+
+            <div class="modal-actions">
+              <button class="btn-cancelar" onclick="cerrarModalAbono()">
+                Cancelar
+              </button>
+
+              <button class="btn-guardar" onclick="guardarAbono()">
+                Registrar Abono
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        const token = localStorage.getItem("token");
+        let ventaSeleccionada = null;
+        let saldoPendiente = 0;
+
+        async function cargarAbonos() {
+          try {
+            const res = await fetch("/api/abonos", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+
+            const data = await res.json();
+
+            let html = "";
+
+            data.forEach((v) => {
+              const hoy = new Date();
+
+              const limite = v.fecha_limite ? new Date(v.fecha_limite) : null;
+
+              let estadoHTML = "";
+
+              if (v.estado === "pagado") {
+                estadoHTML = `
+          <span class="estado pagado">
+            Pagado
+          </span>
+        `;
+              } else if (limite && limite < hoy) {
+                estadoHTML = `
+          <span class="estado vencido">
+            Vencido
+          </span>
+        `;
+              } else {
+                estadoHTML = `
+          <span class="estado pendiente">
+            Pendiente
+          </span>
+        `;
+              }
+
+              html += `
+      
+      <tr>
+
+        <td>${v.folio}</td>
+        <td>${v.cliente}</td>
+
+        <td>
+          $${parseFloat(v.total).toLocaleString()}
+        </td>
+
+        <td>
+          $${parseFloat(v.abonado).toLocaleString()}
+        </td>
+
+        <td>
+          $${parseFloat(v.saldo).toLocaleString()}
+        </td>
+
+        <td>
+          ${
+            v.fecha_limite
+              ? new Date(v.fecha_limite).toLocaleDateString()
+              : "Sin límite"
+          }
+        </td>
+
+        <td>
+          ${estadoHTML}
+        </td>
+
+<td>
+
+  <div class="acciones-abonos">
+
+    ${
+      v.estado !== "pagado"
+        ? `
+      <button
+        class="btn-abonar"
+        onclick="abonar(${v.id_venta},${v.saldo})">
+
+        Abonar
+
+      </button>
+      `
+        : `
+      <span class="liquidado-text">
+        Liquidado
+      </span>
+      `
+    }
+
+    <button
+      class="btn-historial"
+      onclick="verHistorial(${v.id_venta})">
+
+      Historial
+
+    </button>
+
+  </div>
+
+</td>
+
+      </tr>
+
+      `;
+            });
+if ($.fn.DataTable.isDataTable("#tablaAbonos")) {
+  $("#tablaAbonos").DataTable().destroy();
+}
+
+$("#tablaAbonos tbody").html(html);
+
+            $("#tablaAbonos").DataTable({
+              destroy: true,
+
+              pageLength: 5,
+
+              lengthMenu: [5, 10, 25, 50],
+
+              responsive: true,
+
+              language: {
+                search: "Buscar:",
+                lengthMenu: "Mostrar _MENU_",
+                info: "Mostrando _START_ a _END_ de _TOTAL_",
+                paginate: {
+                  next: "Siguiente",
+                  previous: "Anterior",
+                },
+              },
+            });
+          } catch (error) {
+            console.error(error);
+          }
+        }
+
+        // =====================================
+        // VER HISTORIAL
+        // =====================================
+
+async function verHistorial(id) {
+  try {
+    const res = await fetch(`/api/abonos/historial/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    // =====================================
+    // TOTAL ABONADO
+    // =====================================
+
+    const totalAbonado = data.reduce(
+      (acc, a) => acc + parseFloat(a.monto),
+      0,
+    );
+
+    // =====================================
+    // HTML
+    // =====================================
+
+    let html = `
+
+      <div class="saldo-info" style="margin-bottom:20px;">
+        <span>Total abonado:</span>
+
+        <strong>
+          $${totalAbonado.toLocaleString()}
+        </strong>
+      </div>
+
+      <div class="historial-responsive">
+
+<table class="tablaHistorial">
+
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Monto</th>
+            <th>Método</th>
+            <th>Saldo Restante</th>
+            <th>Usuario</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+    `;
+
+    data.forEach((a) => {
+      html += `
+
+        <tr>
+
+<td class="fecha-abono">
+  ${new Date(a.fecha_abono).toLocaleString("es-MX", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  })}
+</td>
+
+<td class="monto-abono">
+  + $${parseFloat(a.monto).toLocaleString()}
+</td>
+
+<td>
+  <span class="metodo-pill">
+    ${a.metodo_pago}
+  </span>
+</td>
+
+<td class="saldo-restante">
+
+  ${
+    parseFloat(a.saldo_restante) <= 0
+      ? `
+      <span class="estado pagado">
+        Liquidado
+      </span>
+      `
+      : `
+      $${parseFloat(a.saldo_restante).toLocaleString()}
+      `
+  }
+
+</td>
+<td class="usuario-abono">
+  ${a.usuario || "N/A"}
+</td>
+
+        </tr>
+
+      `;
+    });
+
+    html += `
+        </tbody>
+      </table>
+
+</div>
+    `;
+
+    document.getElementById("contenidoHistorial").innerHTML = html;
+
+    document.getElementById("modalHistorial").style.display = "flex";
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+        // =====================================
+        // CERRAR HISTORIAL
+        // =====================================
+
+        function cerrarHistorial() {
+          document.getElementById("modalHistorial").style.display = "none";
+        }
+        // =====================================
+        // ABRIR MODAL ABONO
+        // =====================================
+
+        function abonar(id, saldo) {
+          ventaSeleccionada = id;
+
+          saldoPendiente = saldo;
+
+          document.getElementById("saldoActual").innerText = `$${parseFloat(
+            saldo,
+          ).toLocaleString()}`;
+
+          document.getElementById("modalAbono").style.display = "flex";
+        }
+
+        // =====================================
+        // CERRAR MODAL
+        // =====================================
+
+        function cerrarModalAbono() {
+          document.getElementById("modalAbono").style.display = "none";
+
+          document.getElementById("abonoMonto").value = "";
+        }
+
+        // =====================================
+        // GUARDAR ABONO
+        // =====================================
+
+        async function guardarAbono() {
+          try {
+            const monto = document.getElementById("abonoMonto").value;
+
+            const metodo_pago = document.getElementById("abonoMetodo").value;
+
+            if (!monto || monto <= 0) {
+              return Swal.fire("Error", "Ingrese un monto válido", "error");
+            }
+
+            const res = await fetch(
+              `/api/abonos/${ventaSeleccionada}`,
+
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+
+                body: JSON.stringify({
+                  monto,
+                  metodo_pago,
+                }),
+              },
+            );
+
+            const data = await res.json();
+
+            if (!res.ok) {
+              throw new Error(data.message);
+            }
+
+            cerrarModalAbono();
+
+Swal.fire("Éxito", data.message, "success");
+
+await cargarAbonos();
+
+if (
+  document.getElementById("modalHistorial").style.display ===
+  "flex"
+) {
+  await verHistorial(ventaSeleccionada);
+}
+          } catch (error) {
+            Swal.fire("Error", error.message, "error");
+          }
+        }
+
+        cargarAbonos();
+      </script>
+    </div>
+  </body>
+</html>

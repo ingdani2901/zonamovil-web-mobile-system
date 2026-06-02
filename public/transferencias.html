@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transferencias | ZON@MOVIL</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <style>
+      :root {
+        --primary: #4a00e0;
+        --secondary: #8e2de2;
+        --accent: #2575fc;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --light: #f8fafc;
+        --dark: #1e293b;
+        --gray: #64748b;
+        --light-gray: #e2e8f0;
+        --card-bg: rgba(255, 255, 255, 0.15);
+        --card-border: rgba(255, 255, 255, 0.25);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(
+          135deg,
+          var(--secondary),
+          var(--primary),
+          var(--accent)
+        );
+        background-size: 300% 300%;
+        animation: gradientMove 15s ease infinite;
+        color: white;
+        overflow-x: hidden;
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: auto;
+        padding: 30px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 15px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        border: none;
+        outline: none;
+      }
+
+      .btn i {
+        font-size: 14px;
+      }
+
+      .btn-back {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-back:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(-3px);
+      }
+
+      .btn-primary {
+        background: linear-gradient(45deg, var(--accent), var(--primary));
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn-success {
+        background: linear-gradient(45deg, var(--success), #059669);
+        color: white;
+      }
+
+      .btn-danger {
+        background: linear-gradient(45deg, var(--danger), #dc2626);
+        color: white;
+      }
+
+      .card {
+        background: var(--card-bg);
+        backdrop-filter: blur(15px);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        animation: fadeIn 0.5s ease;
+        border: 1px solid var(--card-border);
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .search-container {
+        margin-bottom: 25px;
+        position: relative;
+      }
+
+      .search-container i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 12px 20px 12px 45px;
+        border-radius: 12px;
+        border: none;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s;
+        backdrop-filter: blur(5px);
+      }
+
+      .search-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+      }
+
+      .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      .table-responsive {
+        overflow-x: auto;
+        border-radius: 12px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        text-align: left;
+        padding: 15px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.1);
+        position: sticky;
+        top: 0;
+        backdrop-filter: blur(5px);
+      }
+
+      td {
+        padding: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      tr:hover {
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .status i {
+        font-size: 10px;
+      }
+
+      .en_camino {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+        border: 1px solid rgba(245, 158, 11, 0.4);
+      }
+
+      .recibido {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .action-btn {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+      }
+
+      .action-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      .action-btn.recibir {
+        background: linear-gradient(45deg, var(--success), #059669);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--dark);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 1000;
+        opacity: 0;
+        transition: all 0.3s;
+      }
+
+      .toast.show {
+        opacity: 1;
+        bottom: 50px;
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--danger);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 20px;
+        }
+
+        .header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .header-actions {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+
+      /* Estilos para DataTables personalizados */
+      .dataTables_wrapper .dataTables_paginate .paginate_button {
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+        margin: 0 5px !important;
+        padding: 5px 12px !important;
+      }
+
+      .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      }
+
+      .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.6) !important;
+      }
+
+      .dataTables_wrapper .dataTables_length,
+      .dataTables_wrapper .dataTables_filter,
+      .dataTables_wrapper .dataTables_info {
+        color: white !important;
+      }
+
+      .dataTables_wrapper .dataTables_filter input {
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-radius: 12px !important;
+        padding: 5px 10px !important;
+      }
+
+      .dataTables_wrapper .dataTables_filter input:focus {
+        outline: none;
+        border-color: #8b5cf6 !important;
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.6) !important;
+      }
+
+      /* Estilos para select */
+      select {
+        appearance: none;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.15) !important;
+        color: white !important;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      /* Opciones del select */
+      select option {
+        background: #1e1e2f;
+        color: white;
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(10px);
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border-radius: 25px;
+        padding: 30px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow:
+          0 0 40px rgba(138, 43, 226, 0.3),
+          0 20px 60px rgba(0, 0, 0, 0.5);
+        animation: modalShow 0.3s ease;
+      }
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .modal-title {
+        font-size: 24px;
+        font-weight: 600;
+        background: linear-gradient(90deg, #c084fc, #60a5fa);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .close-modal {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .close-modal:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        transform: rotate(90deg) scale(1.1);
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 500;
+      }
+
+      .form-control {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: white;
+        font-size: 14px;
+        transition: all 0.3s ease;
+      }
+
+      .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+      }
+
+      .form-control:focus {
+        outline: none;
+        border-color: #8b5cf6;
+        box-shadow:
+          0 0 10px rgba(139, 92, 246, 0.6),
+          0 0 20px rgba(139, 92, 246, 0.3);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 25px;
+      }
+
+      @keyframes modalShow {
+        from {
+          transform: scale(0.9);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .input-busqueda {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+      }
+      .lista-equipos {
+        max-height: 200px;
+        overflow-y: auto;
+        background: #1e1e2f;
+        border-radius: 10px;
+        margin-top: 5px;
+        display: none;
+      }
+
+      .item-equipo {
+        padding: 10px;
+        cursor: pointer;
+        color: white;
+      }
+
+      .item-equipo:hover {
+        background: #6c5ce7;
+      }
+
+      .equipo-seleccionado {
+        margin-top: 10px;
+        color: #00cec9;
+        font-weight: bold;
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <script src="utils/auth.js"></script>
+    <!-- Modal para nueva transferencia -->
+    <div class="modal" id="modalTransferencia">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">
+            <i class="fas fa-exchange-alt"></i> Nueva Transferencia
+          </h2>
+          <button class="close-modal" onclick="cerrarModal()">&times;</button>
+        </div>
+
+        <form id="formTransferencia">
+          <div class="form-group">
+            <label>Equipo *</label>
+            <!-- 🔥 BUSCADOR DE EQUIPOS -->
+            <input
+              type="text"
+              id="buscarEquipo"
+              placeholder="Buscar equipo..."
+              class="input-busqueda"
+            />
+
+            <div id="listaEquipos" class="lista-equipos"></div>
+
+            <!-- 🔥 VALOR REAL -->
+            <input type="hidden" id="equipo" />
+
+            <!-- 🔥 VISUAL -->
+            <div id="equipoSeleccionado" class="equipo-seleccionado"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Sucursal Destino *</label>
+            <p style="color: #aaa; font-size: 14px">
+              Origen: <span id="origenUsuario">Cargando...</span>
+            </p>
+            <select class="form-control" id="destino" required>
+              <option value="">Seleccionar sucursal</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Comentario</label>
+            <textarea
+              class="form-control"
+              id="comentario"
+              placeholder="Observaciones sobre la transferencia"
+            ></textarea>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn" onclick="cerrarModal()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Enviar Transferencia
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="header">
+        <button
+          class="btn btn-back"
+          onclick="window.location = 'dashboard.html'"
+        >
+          <i class="fa fa-arrow-left"></i> Volver
+        </button>
+
+        <h1><i class="fas fa-exchange-alt"></i> Transferencias</h1>
+
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="abrirModal()">
+            <i class="fa fa-plus"></i> Nueva Transferencia
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="table-responsive">
+          <table id="tablaTransferencias">
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Envía</th>
+                <th>Recibe</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Datos se cargarán dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+      let transferencias = [];
+      let dataTable = null;
+      const toast = document.getElementById("toast");
+
+      function showToast(msg, type = "success") {
+        toast.textContent = msg;
+        toast.className = "toast show " + type;
+        setTimeout(() => (toast.className = "toast"), 3000);
+      }
+      let equiposGlobal = [];
+
+      async function cargarEquipos() {
+        try {
+          const token = localStorage.getItem("token");
+          // Asegúrate de que tu API de 'disponibles' filtre por la sucursal del usuario actual
+          const res = await fetch(
+            "http://localhost:3000/api/inventario/disponibles",
+            {
+              headers: { Authorization: "Bearer " + token },
+            },
+          );
+          const data = await res.json();
+          equiposGlobal = data;
+        } catch (error) {
+          console.error("Error cargando equipos:", error);
+        }
+      }
+      document
+        .getElementById("buscarEquipo")
+        .addEventListener("input", async function () {
+          const texto = this.value;
+          const lista = document.getElementById("listaEquipos");
+
+          lista.innerHTML = "";
+
+          if (!texto) {
+            lista.style.display = "none";
+            return;
+          }
+
+          const token = localStorage.getItem("token");
+
+          const res = await fetch(
+            `http://localhost:3000/api/transferencias/buscar-equipos?q=${encodeURIComponent(texto)}`,
+            {
+              headers: { Authorization: "Bearer " + token },
+            },
+          );
+
+          const data = await res.json();
+
+          data.forEach((e) => {
+            const div = document.createElement("div");
+            div.className = "item-equipo";
+
+            div.textContent = `${e.marca} ${e.modelo} (${e.color} ${e.capacidad})`;
+
+            div.onclick = () => seleccionarEquipo(e);
+
+            lista.appendChild(div);
+          });
+
+          lista.style.display = "block";
+        });
+      function seleccionarEquipo(e) {
+        document.getElementById("equipo").value = e.id_equipo;
+
+        document.getElementById("equipoSeleccionado").textContent =
+          `Seleccionado: ${e.marca} ${e.modelo}
+${e.color ? `(${e.color})` : ""}
+${e.capacidad ? `- ${e.capacidad}` : ""}`;
+
+        document.getElementById("listaEquipos").style.display = "none";
+      }
+      async function cargarSucursales() {
+        try {
+          const token = localStorage.getItem("token");
+          const user = JSON.parse(localStorage.getItem("user")); //  IMPORTANTE
+
+          const res = await fetch("http://localhost:3000/api/sucursales", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          });
+
+          const data = await res.json();
+
+          const select = document.getElementById("destino");
+          select.innerHTML = '<option value="">Seleccionar sucursal</option>';
+
+          data.forEach((s) => {
+            // 🔥 AQUÍ VA EL FILTRO CORRECTO
+            if (s.id_sucursal === user.id_sucursal) return;
+
+            const option = document.createElement("option");
+            option.value = s.id_sucursal;
+            option.textContent = s.nombre;
+
+            select.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error cargando sucursales:", error);
+          showToast("Error cargando sucursales", "error");
+        }
+      }
+      function mostrarSucursalUsuario() {
+        const user = JSON.parse(localStorage.getItem("user"));
+
+        if (!user) {
+          document.getElementById("origenUsuario").textContent =
+            "No identificado";
+          return;
+        }
+
+        document.getElementById("origenUsuario").textContent =
+          user.sucursal_nombre || user.sucursal || "Desconocida";
+      }
+
+      async function cargarTransferencias() {
+        try {
+          const token = localStorage.getItem("token");
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+          const res = await fetch("http://localhost:3000/api/transferencias", {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+            signal: controller.signal,
+          });
+
+          clearTimeout(timeoutId);
+
+          if (!res.ok)
+            throw new Error(`Error ${res.status}: ${res.statusText}`);
+
+          const data = await res.json();
+          transferencias = data;
+          renderizarTabla(data);
+        } catch (error) {
+          console.error("Error cargando transferencias:", error);
+          showToast(
+            error.message.includes("aborted")
+              ? "La solicitud tardó demasiado"
+              : "Error cargando transferencias",
+            "error",
+          );
+        }
+      }
+
+      function renderizarTabla(data) {
+        if (dataTable) {
+          dataTable.destroy();
+        }
+
+        const tabla = document.querySelector("#tablaTransferencias tbody");
+        tabla.innerHTML = "";
+
+        const user = JSON.parse(localStorage.getItem("user")); // ✅ AQUÍ
+
+        if (data.length === 0) {
+          tabla.innerHTML = `
+            <tr>
+                <td colspan="8" style="text-align:center; padding:30px;">
+                    <i class="fas fa-inbox" style="font-size:40px; opacity:0.5; margin-bottom:10px;"></i>
+                    <p>No hay transferencias registradas</p>
+                </td>
+            </tr>
+        `;
+          return;
+        }
+        data.forEach((t) => {
+          const row = document.createElement("tr");
+
+          let acciones = "";
+
+          if (t.estado === "en_camino") {
+            acciones = `
+            <button onclick="confirmarRecepcion(${t.id_transferencia})"
+                style="background:#10B981;color:white;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;">
+                ✔ Recibir
+            </button>
+        `;
+          } else {
+            acciones = `<i class="fas fa-check-circle" style="color:#10B981"></i>`;
+          }
+
+          row.innerHTML = `
+        <td>${t.marca} ${t.modelo}</td>
+        <td>${t.sucursal_origen}</td>
+        <td>${t.sucursal_destino}</td>
+        <td>${t.envia}</td>
+        <td class="${t.recibe ? "fade-in" : ""}">
+            ${t.recibe ? "✔️ " + t.recibe : "—"}
+        </td>
+        <td>
+            <span class="status ${t.estado}">
+                <i class="fas fa-circle"></i> ${t.estado.replace("_", " ")}
+            </span>
+        </td>
+        <td>${new Date(t.fecha_envio).toLocaleDateString()}</td>
+        <td>
+            <div class="actions">
+                ${acciones}
+            </div>
+        </td>
+    `;
+
+          tabla.appendChild(row);
+        });
+        dataTable = $("#tablaTransferencias").DataTable({
+          pageLength: 5,
+          language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_",
+            info: "Mostrando _START_ a _END_ de _TOTAL_",
+            paginate: {
+              next: "Siguiente",
+              previous: "Anterior",
+            },
+          },
+        });
+      }
+
+      async function confirmarRecepcion(id_transferencia) {
+        try {
+          const token = localStorage.getItem("token");
+
+          const res = await fetch(
+            `http://localhost:3000/api/transferencias/recibir/${id_transferencia}`,
+            {
+              method: "PUT",
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            },
+          );
+
+          const data = await res.json();
+
+          if (!res.ok) throw new Error(data.error);
+
+          showToast("Transferencia recibida correctamente", "success");
+
+          cargarTransferencias();
+        } catch (error) {
+          console.error(error);
+          showToast("Error al recibir transferencia", "error");
+        }
+      }
+
+      async function recibirTransferencia(id, id_usuario_recibe) {
+        try {
+          const token = localStorage.getItem("token");
+          // 🔥 validar que pertenece a la sucursal destino
+          {
+            return res.status(403).json({ error: "No autorizado" });
+          }
+
+          const response = await fetch(
+            `http://localhost:3000/api/transferencias/recibir/${id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+              body: JSON.stringify({
+                usuario_recibe: id_usuario_recibe,
+              }),
+            },
+          );
+
+          if (response.ok) {
+            showToast("Transferencia marcada como recibida", "success");
+            // Actualizar solo la fila en memoria
+            const t = transferencias.find((tr) => tr.id_transferencia == id);
+
+            if (t) {
+              t.estado = "recibido";
+              t.recibe = "Tú"; // luego lo hacemos dinámico con el nombre real
+            }
+
+            // Volver a renderizar SIN recargar API
+            renderizarTabla(transferencias);
+          } else {
+            const data = await response.json();
+            showToast(data.message || "Error al actualizar", "error");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          showToast("Error de conexión", "error");
+        }
+      }
+
+      function abrirModal() {
+        document.getElementById("modalTransferencia").style.display = "flex";
+
+        cargarEquipos();
+        cargarSucursales();
+        mostrarSucursalUsuario(); // 👈 FALTABA AQUÍ
+      }
+
+      function cerrarModal() {
+        document.getElementById("modalTransferencia").style.display = "none";
+        document.getElementById("formTransferencia").reset();
+      }
+
+      document
+        .getElementById("formTransferencia")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const equipo = document.getElementById("equipo").value;
+          const destino = document.getElementById("destino").value;
+          const comentario = document.getElementById("comentario").value;
+
+          // 🔥 VALIDACIONES
+          if (!equipo) {
+            return showToast("Selecciona un equipo", "warning");
+          }
+
+          if (!destino) {
+            return showToast("Selecciona una sucursal destino", "warning");
+          }
+
+          try {
+            const token = localStorage.getItem("token");
+
+            const res = await fetch(
+              "http://localhost:3000/api/transferencias",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: "Bearer " + token,
+                },
+                body: JSON.stringify({
+                  id_equipo: equipo,
+                  sucursal_destino: destino,
+                  observaciones: comentario,
+                }),
+              },
+            );
+
+            if (res.ok) {
+              showToast("Transferencia creada correctamente", "success");
+              cerrarModal();
+              cargarTransferencias();
+            } else {
+              const data = await res.json();
+              throw new Error(data.message || "Error al crear transferencia");
+            }
+          } catch (error) {
+            console.error("Error al crear transferencia:", error);
+            showToast(error.message, "error");
+          }
+        });
+      // Inicialización
+      document.addEventListener("DOMContentLoaded", function () {
+        cargarTransferencias();
+      });
+    </script>
+  </body>
+</html>

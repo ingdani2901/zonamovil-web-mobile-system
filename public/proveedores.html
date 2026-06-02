@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Proveedores | ZON@MOVIL</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<style>
+:root {
+    --primary: #4A00E0;
+    --secondary: #8E2DE2;
+    --accent: #2575FC;
+    --success: #10B981;
+    --warning: #F59E0B;
+    --danger: #EF4444;
+    --light: #F8FAFC;
+    --dark: #1E293B;
+    --gray: #64748B;
+    --light-gray: #E2E8F0;
+    --card-bg: rgba(255, 255, 255, 0.15);
+    --card-border: rgba(255, 255, 255, 0.25);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--secondary), var(--primary), var(--accent));
+    background-size: 300% 300%;
+    animation: gradientMove 15s ease infinite;
+    color: white;
+    overflow-x: hidden;
+}
+
+@keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 30px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    border: none;
+    outline: none;
+}
+
+.btn i {
+    font-size: 14px;
+}
+
+.btn-back{
+    height:52px;
+    padding:0 22px;
+
+    border-radius:18px;
+
+    background:
+        rgba(255,255,255,.12);
+
+    color:white;
+
+    font-weight:600;
+
+    font-size:16px;
+
+    backdrop-filter:blur(12px);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    transition:.25s;
+}
+
+.btn-back:hover{
+    transform:translateY(-2px);
+
+    background:
+        rgba(255,255,255,.18);
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateX(-3px);
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--accent), var(--primary));
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.btn-success {
+    background: linear-gradient(45deg, var(--success), #059669);
+    color: white;
+}
+
+.btn-danger {
+    background: linear-gradient(45deg, var(--danger), #DC2626);
+    color: white;
+}
+.filtros-container{
+    display:flex;
+    gap:12px;
+    margin-bottom:20px;
+    flex-wrap:wrap;
+}
+
+.filtro-btn{
+
+    background:
+        rgba(255,255,255,.12);
+
+    color:white;
+
+    border:none;
+
+    border-radius:14px;
+
+    padding:12px 20px;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+    font-weight:600;
+
+    backdrop-filter:blur(12px);
+
+    border:
+        1px solid rgba(255,255,255,.08);
+}
+
+.filtro-btn:hover{
+
+    transform:translateY(-2px);
+
+    background:
+        rgba(139,92,246,.25);
+
+}
+
+.filtro-btn.active{
+
+    background:
+        linear-gradient(
+            135deg,
+            #6366f1,
+            #8b5cf6
+        );
+
+    box-shadow:
+        0 0 20px rgba(139,92,246,.55);
+
+    transform:scale(1.03);
+
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.5s ease;
+    border: 1px solid var(--card-border);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.search-container {
+    margin-bottom: 25px;
+    position: relative;
+}
+
+.search-container i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 20px 12px 45px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 14px;
+    transition: all 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+.search-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 15px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.1);
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(5px);
+}
+
+td {
+    font-size:15px;
+font-weight:500;
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn{
+    width:38px;
+    height:38px;
+
+    border-radius:12px;
+
+    border:none;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        rgba(255,255,255,.08);
+
+    font-size:15px;
+}
+.action-btn.edit:hover{
+    background:#2563eb;
+    color:white;
+}
+
+.action-btn.delete:hover{
+    background:#dc2626;
+    color:white;
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.action-btn.edit {
+    color: var(--accent);
+}
+
+.action-btn.delete {
+    color: var(--danger);
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.modal-content {
+    width: 95%;
+    max-width: 650px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(30,41,59,.95),
+            rgba(15,23,42,.95)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius: 28px;
+
+    padding: 35px;
+
+    position: relative;
+
+    box-shadow:
+        0 0 50px rgba(139,92,246,.35),
+        0 25px 80px rgba(0,0,0,.45);
+
+    animation: modalShow .25s ease;
+
+    backdrop-filter: blur(20px);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: 600;
+    background: linear-gradient(90deg, #c084fc, #60a5fa);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.close-modal {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.close-modal:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 0 10px rgba(239,68,68,0.6);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+}
+
+.form-control{
+    width:100%;
+    padding:16px 18px;
+
+    border-radius:16px;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    background:
+        rgba(255,255,255,.06);
+
+    color:white;
+
+    font-size:15px;
+
+    transition:.25s;
+}
+
+.form-control:focus{
+    outline:none;
+
+    border-color:#8b5cf6;
+
+    box-shadow:
+        0 0 15px rgba(139,92,246,.55);
+
+    background:
+        rgba(255,255,255,.09);
+}
+
+.form-control::placeholder{
+    color:rgba(255,255,255,.45);
+}
+
+.form-control::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.6), 0 0 20px rgba(139, 92, 246, 0.3);
+    background: rgba(255,255,255,0.12);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+@keyframes modalShow {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--dark);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s;
+}
+
+.toast.show {
+    opacity: 1;
+    bottom: 50px;
+}
+
+.toast.success {
+    background: var(--success);
+}
+
+.toast.error {
+    background: var(--danger);
+}
+
+.toast.warning {
+    background: var(--warning);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .modal-content {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+/* Estilos para DataTables personalizados */
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    margin: 0 5px !important;
+    padding: 5px 12px !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.6) !important;
+}
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info {
+    color: white !important;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 5px 10px !important;
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    outline: none;
+    border-color: #8b5cf6 !important;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.6) !important;
+}
+.dataTables_length select{
+
+    background:
+        rgba(255,255,255,.15) !important;
+
+    color:white !important;
+
+    border:
+        1px solid rgba(255,255,255,.25) !important;
+
+    border-radius:12px !important;
+
+    padding:6px 12px !important;
+
+    backdrop-filter:blur(10px);
+
+}
+
+.dataTables_length option{
+    background:#1e1b4b;
+    color:white;
+}
+</style>
+</head>
+<body>
+    <script src="/utils/auth.js"></script>
+    <div class="container">
+<div class="header">
+
+    <button
+        class="btn btn-back"
+        onclick="window.location='dashboard.html'"
+    >
+        <i class="fa fa-arrow-left"></i>
+        Volver
+    </button>
+
+    <h1>
+        <i class="fas fa-truck"></i>
+        Proveedores
+    </h1>
+
+    <div class="header-actions">
+
+        <button
+            class="btn btn-primary"
+            onclick="abrirModal()"
+        >
+            <i class="fa fa-plus"></i>
+            Nuevo Proveedor
+        </button>
+
+    </div>
+
+</div>
+<div class="filtros-container">
+
+    <button
+        class="filtro-btn active"
+        onclick="cambiarFiltro(this,'activos')"
+    >
+        <i class="fas fa-check-circle"></i>
+        Activos
+    </button>
+
+    <button
+        class="filtro-btn"
+        onclick="cambiarFiltro(this,'eliminados')"
+    >
+        <i class="fas fa-trash"></i>
+        Eliminados
+    </button>
+
+    <button
+        class="filtro-btn"
+        onclick="cambiarFiltro(this,'todos')"
+    >
+        <i class="fas fa-layer-group"></i>
+        Todos
+    </button>
+
+</div>
+
+<div class="card">
+
+    <div class="table-responsive">
+
+        <table id="tablaData">
+
+            <thead>
+                <tr>
+                    <th>Empresa</th>
+                    <th>Contacto</th>
+                    <th>Teléfono</th>
+                    <th>Ubicación</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaProveedores"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<div class="modal" id="modal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2 class="modal-title">
+                <i class="fas fa-truck"></i>
+                Nuevo Proveedor
+            </h2>
+
+            <button
+                class="close-modal"
+                onclick="cerrarModal()"
+            >
+                &times;
+            </button>
+
+        </div>
+
+        <input type="hidden" id="id_proveedor">
+
+        <div class="form-group">
+            <label>Empresa *</label>
+
+            <input
+                id="empresa"
+                class="form-control"
+                placeholder="Nombre de la empresa"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Contacto</label>
+
+            <input
+                id="contacto"
+                class="form-control"
+                placeholder="Nombre del contacto"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Teléfono</label>
+
+            <input
+                id="telefono"
+                class="form-control"
+                placeholder="Número telefónico"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>Ubicación</label>
+
+            <input
+                id="ubicacion"
+                class="form-control"
+                placeholder="Guadalajara, Jalisco"
+            >
+        </div>
+
+        <div class="modal-footer">
+
+            <button
+                class="btn"
+                onclick="cerrarModal()"
+            >
+                Cancelar
+            </button>
+
+            <button
+                class="btn btn-primary"
+                onclick="guardar()"
+            >
+                Guardar Proveedor
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        let table;
+        let filtro = "activos";
+        const token = localStorage.getItem("token");
+
+        $(document).ready(() => { cargar(); });
+function cambiarFiltro(btn, tipo){
+
+    filtro = tipo;
+
+    document
+        .querySelectorAll(".filtro-btn")
+        .forEach(b => b.classList.remove("active"));
+
+    btn.classList.add("active");
+
+    cargar();
+
+}
+
+        async function cargar() {
+            const res = await fetch("/api/proveedores", { headers: { Authorization: "Bearer " + token }});
+            const data = await res.json();
+            
+            if (table) table.destroy();
+const filtrados = data.filter(p => {
+
+    if(filtro === "activos"){
+        return p.activo === true;
+    }
+
+    if(filtro === "eliminados"){
+        return p.activo === false;
+    }
+
+    return true;
+
+});
+table = $('#tablaData').DataTable({
+
+    destroy: true,
+
+    data: filtrados,
+
+    columns: [
+
+        {
+            data: "empresa",
+            render: data => `<b>${data}</b>`
+        },
+
+        {
+            data: "contacto",
+            render: data => data || "-"
+        },
+
+        {
+            data: "telefono",
+            render: data => data || "-"
+        },
+
+        {
+            data: "ubicacion",
+            render: data => data || "-"
+        },
+
+        {
+            data: null,
+
+            render: function(p){
+
+                if(p.activo){
+
+                    return `
+                        <div class="actions">
+
+                            <button
+                                class="action-btn edit"
+                                onclick='editar(${JSON.stringify(p)})'
+                            >
+                                <i class="fas fa-edit"></i>
+                            </button>
+
+                            <button
+                                class="action-btn delete"
+                                onclick="eliminar(${p.id_proveedor})"
+                            >
+                                <i class="fas fa-trash"></i>
+                            </button>
+
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="actions">
+
+                        <button
+                            class="action-btn edit"
+                            onclick="restaurar(${p.id_proveedor})"
+                        >
+                            <i class="fas fa-undo"></i>
+                        </button>
+
+                    </div>
+                `;
+            }
+        }
+
+    ],
+
+    pageLength: 5,
+
+    lengthMenu: [5,10,25,50],
+
+    deferRender: true,
+
+    processing: true,
+
+    language: {
+        search: "Buscar:",
+        lengthMenu: "Mostrar _MENU_",
+        info: "Mostrando _START_ a _END_ de _TOTAL_",
+        paginate: {
+            next: "Siguiente",
+            previous: "Anterior"
+        }
+    }
+
+});
+
+
+ 
+        }
+
+        function abrirModal() {
+            document.getElementById("id_proveedor").value = "";
+            document.getElementById("empresa").value = "";
+            document.getElementById("contacto").value = "";
+            document.getElementById("telefono").value = "";
+            document.getElementById("ubicacion").value = "";
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        function editar(p) {
+            document.getElementById("id_proveedor").value = p.id_proveedor;
+            document.getElementById("empresa").value = p.empresa;
+            document.getElementById("contacto").value = p.contacto;
+            document.getElementById("telefono").value = p.telefono;
+            document.getElementById("ubicacion").value = p.ubicacion;
+            document.getElementById("modal").style.display = "flex";
+        }
+
+        function cerrarModal() { document.getElementById("modal").style.display = "none"; }
+
+        async function guardar() {
+            const id = document.getElementById("id_proveedor").value;
+            const body = {
+                empresa:document.getElementById("empresa").value,
+                contacto: document.getElementById("contacto").value,
+                telefono: document.getElementById("telefono").value,
+                ubicacion: document.getElementById("ubicacion").value
+            };
+
+            const url = id ? `/api/proveedores/${id}` : "/api/proveedores";
+            const method = id ? "PUT" : "POST";
+
+            const res = await fetch(url, {
+                method,
+                headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+                body: JSON.stringify(body)
+            });
+
+            if(res.ok) {
+                Swal.fire("Éxito", "Proveedor guardado correctamente", "success");
+                cerrarModal();
+                cargar();
+            }
+        }
+
+        async function eliminar(id) {
+            const result = await Swal.fire({
+                title: '¿Estás seguro?',
+                text: "No podrás revertir esto",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar'
+            });
+
+            if (result.isConfirmed) {
+                await fetch(`/api/proveedores/${id}`, { method: "DELETE", headers: { Authorization: "Bearer " + token }});
+                cargar();
+            }
+        }
+        async function restaurar(id){
+
+    await fetch(
+        `/api/proveedores/restaurar/${id}`,
+        {
+            method:"PUT",
+            headers:{
+                Authorization:"Bearer " + token
+            }
+        }
+    );
+
+    cargar();
+
+}
+    </script>
+</body>
+</html>
